@@ -42,16 +42,35 @@ instance (Num a, Ord a) => Num (Polynomial a) where
 instance Functor (Term) where
     fmap f (Term coeff atoms) = Term (f coeff) atoms
 
+instance Functor (Polynomial) where
+    fmap f (Polynomial terms) = Polynomial (map (fmap f) terms)
+    fmap f poly = pmap (fmap f) poly
+
+-- Takes a function and either applies it to a stand-along polynomial or
+-- applies it to the constituent polynomials in a sum, product or power
+pmap :: (Polynomial a -> Polynomial b) -> Polynomial a -> Polynomial b
+pmap f p@(Polynomial _) = f p
+pmap f (Product a b) = Product (f a) (f b)
+pmap f (Sum a b) = Sum (f a) (f b)
+pmap f (Power a n) = Power (f a) n
+
+-- Compose a list of functions and apply them to an argument.
+-- compose [f, g] x = g(f(x))
 compose :: [a -> a] -> a -> a
 compose fns v = foldl (flip (.)) id fns $ v
 
+-- Construct a constant polynomial
 const_poly :: a -> Polynomial a
 const_poly n = Polynomial [Term n []]
 
-x_poly :: (Num a, Fractional a) => [a] -> Polynomial a
+-- Construct a polynomial in x from a list of coefficients
+x_poly :: (Num a) => [a] -> Polynomial a
 x_poly = construct_univariate_polynomial 'x'
 
-construct_poly :: (Num a, Fractional a, Read a, Ord a) => String -> Polynomial a
+-- Construct a polynomial from a string. The parsing is very basic so every
+-- term needs a coefficient (even if it's 1) and a power of x (even if it's x^0 
+-- or x^1)
+construct_poly :: (Num a, Read a, Ord a) => String -> Polynomial a
 construct_poly string_rep = reduce_full $ Polynomial $ map to_poly_term terms
     where
         to_poly_term term_string = Term (get_coeff term_string) (get_vars term_string)
@@ -69,7 +88,8 @@ construct_poly string_rep = reduce_full $ Polynomial $ map to_poly_term terms
                 rest = dropWhile isDigit (tail $ tail non_coeff)
         terms = map (filter (/= ' ')) $ splitOn "+" string_rep
 
-construct_univariate_polynomial :: (Num a, Fractional a) => Char -> [a] -> Polynomial a
+-- Construct a polynomial in one arbitrary variable from a list of coefficients
+construct_univariate_polynomial :: (Num a) => Char -> [a] -> Polynomial a
 construct_univariate_polynomial var coeffs =
     Polynomial $ zipWith to_term [0 .. length coeffs] coeffs 
         where
@@ -80,12 +100,6 @@ construct_univariate_polynomial var coeffs =
 -- Replace a variable in a polynomial with another polynomial
 replace_variable :: (Eq a, Num a, Ord a) =>
     Char -> Polynomial a -> Polynomial a -> Polynomial a
-replace_variable var replacement (Product a b) =
-    Product (replace_variable var replacement a) (replace_variable var replacement b)
-replace_variable var replacement (Sum a b) = 
-    Sum  (replace_variable var replacement a) (replace_variable var replacement b)
-replace_variable var replacement (Power poly n) =
-    Power (replace_variable var replacement poly) n
 replace_variable var replacement (Polynomial terms) = sum $ map (replace_variable_term var replacement) terms 
     where
         replace_variable_term :: (Num a) => Char -> Polynomial a -> Term a -> Polynomial a
@@ -97,11 +111,10 @@ replace_variable var replacement (Polynomial terms) = sum $ map (replace_variabl
                     (Atom _ pow) = head $ filter (has_var var) atoms 
                     remaining_atoms = filter (not_has_var var) atoms
                     new_poly = Polynomial [ Term coeff remaining_atoms ]
+replace_variable var replacement poly = pmap (replace_variable var replacement) poly
 
 -- Evaluate a polynomial at var = val
 evaluate :: (Eq a, Num a, Ord a) => Char -> a -> Polynomial a -> Polynomial a
-evaluate var val (Product a b) = Product (evaluate var val a) (evaluate var val b)
-evaluate var val (Sum a b) = Sum (evaluate var val a) (evaluate var val b)
 evaluate var val (Polynomial terms) = reduce_sums $ Polynomial (map (evaluate_term var val) terms)
     where
         evaluate_term :: (Eq a, Num a) => Char -> a -> Term a -> Term a
@@ -117,10 +130,13 @@ evaluate var val (Polynomial terms) = reduce_sums $ Polynomial (map (evaluate_te
                 new_coeff = if length relevant_atoms > 0 then
                                 coeff * (evaluate_atom (head relevant_atoms) val)
                             else coeff
+evaluate var val poly = pmap (evaluate var val) poly
 
+-- Return a list of the variables used in a polynomial
 variables_in_poly :: Polynomial a -> [Char]
 variables_in_poly poly = Set.toList $ variable_set poly
 
+-- Return a set of the variables used in a polynomial
 variable_set :: Polynomial a -> Set.Set Char
 variable_set (Product a b) = Set.union (variable_set a) (variable_set b)
 variable_set (Sum a b)     = Set.union (variable_set a) (variable_set b)
@@ -148,9 +164,12 @@ taylor_expand vars center poly = compose undo_replacements new_poly
         free_vars = filter (\v -> Set.notMember v used_vars) ['a', 'b' .. ]
         used_vars = variable_set poly
 
+-- Return a list of the mixed partial derivatives used in a taylor approximation
+-- of degree deg
 taylor_partials :: (Num a, Ord a) => [Char] -> Int -> Polynomial a -> [[Polynomial a]]
 taylor_partials vars deg poly = take (deg + 1) $ unfoldr (\derivs -> Just (derivs, concat $ map (partials vars) derivs)) [poly]
 
+-- Return the partial derivatives with return to the given variables
 partials :: (Num a, Ord a) => [Char] -> Polynomial a -> [Polynomial a]
 partials vars poly = map (\var -> differentiate var poly) vars 
 
@@ -240,9 +259,6 @@ multiply_terms (Term coeff_a atoms_a) (Term coeff_b atoms_b) =
 reduce_sums :: (Num a, Ord a, Eq a) => Polynomial a -> Polynomial a
 reduce_sums (Sum (Polynomial a_terms) (Polynomial b_terms)) =
     reduce_sums $ Polynomial (a_terms ++ b_terms)
-reduce_sums (Sum a b) = Sum (reduce_sums a) (reduce_sums b)
-reduce_sums (Product a b) = Product (reduce_sums a) (reduce_sums b)
-reduce_sums (Power a n) = Power (reduce_sums a) n
 reduce_sums (Polynomial []) = 0
 reduce_sums (Polynomial terms) = 
     Polynomial (filter is_nonzero $ compress []
@@ -268,6 +284,7 @@ reduce_sums (Polynomial terms) =
             sum_terms :: (Num a) => Term a -> Term a -> Term a
             sum_terms (Term coeff_a atoms) (Term coeff_b _) =
                 Term (coeff_a + coeff_b) atoms
+reduce_sums poly = pmap reduce_sums poly
 
 -- Groups variables together in a term of a polynomial
 reduce_term :: (Num a, Eq a) => Term a -> Term a
