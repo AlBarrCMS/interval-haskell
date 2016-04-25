@@ -3,17 +3,17 @@ LD = g++
 CPPFLAGS = -std=c++11 -g -Wall -pedantic
 LDFLAGS =
 
-SRCS = example.cpp jsoncpp.cpp
+SRCS = example_program.cpp jsoncpp.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-all: example
+all: example_program
 
-example: $(OBJS)
+example_program: $(OBJS)
 	g++ -o $@ $^ $(LDFLAGS)
 
 %.o : %.cpp
 	$(CC) -c $(CPPFLAGS) $< -o $@
 
 clean :
-	rm -f example *.o
+	rm -f example_program *.o
