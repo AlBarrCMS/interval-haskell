@@ -1,8 +1,6 @@
 #include "json/json.h"
 #include <iostream>
 #include <fstream>
-#include <iterator>
-#include <algorithm>
 
 int main(int argc, char ** argv) {
     std::string input_filename = "example_input.json";
