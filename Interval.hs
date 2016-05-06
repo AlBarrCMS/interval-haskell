@@ -1,7 +1,22 @@
 module Interval (
-    Interval(Interval), midpoint, corner, width, radius, Interval.abs, mig, mag,
-    sign, hull, neg, plus, minus, times, scalar_mult, divided, pow
-     
+    Interval(Interval),
+    from_num,
+    midpoint,
+    corner,
+    width,
+    radius,
+    Interval.abs,
+    mig,
+    mag,
+    sign,
+    hull,
+    neg,
+    plus,
+    minus,
+    times,
+    scalar_mult,
+    divided,
+    pow
 ) where
 
 data Interval a = Interval a a
@@ -9,7 +24,7 @@ data Interval a = Interval a a
 instance (Show a) => Show (Interval a) where
     show (Interval lower upper) = "[" ++ (show lower) ++ ", " ++ (show upper) ++ "]"
 
-instance (Num a, Fractional a, Ord a) => Num (Interval a) where
+instance (Num a, Ord a) => Num (Interval a) where
     negate = neg
     (+) = plus
     (*) = times
@@ -28,6 +43,12 @@ instance (Ord a) => Ord (Interval a) where
     compare (Interval a b) (Interval c d) = if lower_comp == EQ then upper_comp else lower_comp
         where lower_comp = compare a c
               upper_comp = compare b d
+
+instance Functor (Interval) where
+    fmap f (Interval lower upper) = Interval (f lower) (f upper)
+
+from_num :: a -> Interval a
+from_num n = Interval n n
 
 midpoint :: (Num a, Fractional a) => Interval a -> a
 midpoint (Interval lower upper) = (lower + upper) / 2
@@ -93,5 +114,3 @@ pos_pow (Interval lower upper) n = Interval (lower^n) (upper^n)
 
 neg_pow :: (Num a, Ord a, Fractional a) => Interval a -> Int -> Interval a
 neg_pow interval n = divided (Interval 1 1) (pos_pow interval (-n))
-
-
