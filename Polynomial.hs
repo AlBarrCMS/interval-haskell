@@ -1,10 +1,34 @@
 module Polynomial(
-
+    Polynomial (Polynomial, Product, Power, Sum),
+    Term (Term),
+    Atom (Atom),
+    to_const,
+    const_poly,
+    x_poly,
+    construct_poly,
+    construct_univariate_polynomial,
+    replace_variable,
+    evaluate,
+    evaluate_one_var,
+    variables_in_poly,
+    taylor_expand,
+    partials,
+    differentiate,
+    add,
+    scalar_multiply,
+    multiply,
+    reduce_full,
+    add_full,
+    multiply_full,
+    reduce_sums
 ) where
+
 import Data.Char
 import Data.List
 import Data.List.Split
 import qualified Data.Set as Set
+
+-- TODO: Fix squaring
 
 data Atom = Atom Char Int deriving Eq
 data Term a = Term a [Atom] deriving Eq
@@ -63,6 +87,22 @@ compose fns v = foldl (flip (.)) id fns $ v
 const_poly :: a -> Polynomial a
 const_poly n = Polynomial [Term n []]
 
+-- Returns the constant term of the polynomial
+to_const :: (Num a, Ord a) => Polynomial a -> a
+to_const (Product a b) = (to_const a) * (to_const b)
+to_const (Sum a b) = (to_const a) + (to_const b)
+to_const (Power a n) = (to_const a)^n
+to_const poly = const_term reduced_poly
+    where
+        reduced_poly = reduce_full poly
+       
+        -- Returns the constant term of a polynomial assumed to be 
+        -- in standard form (so either the constant is the first term,
+        -- or there is no constant 
+        const_term :: (Num a) => Polynomial a -> a
+        const_term (Polynomial (Term c []:_)) = c
+        const_term _ = 0
+
 -- Construct a polynomial in x from a list of coefficients
 x_poly :: (Num a) => [a] -> Polynomial a
 x_poly = construct_univariate_polynomial 'x'
@@ -113,9 +153,16 @@ replace_variable var replacement (Polynomial terms) = sum $ map (replace_variabl
                     new_poly = Polynomial [ Term coeff remaining_atoms ]
 replace_variable var replacement poly = pmap (replace_variable var replacement) poly
 
+evaluate :: (Eq a, Num a, Ord a) => [Char] -> [a] -> Polynomial a -> Polynomial a
+evaluate vars vals poly = compose evaluations poly
+    where
+        evaluations = zipWith (\var val -> evaluate_one_var var val) vars vals
+        
+
 -- Evaluate a polynomial at var = val
-evaluate :: (Eq a, Num a, Ord a) => Char -> a -> Polynomial a -> Polynomial a
-evaluate var val (Polynomial terms) = reduce_sums $ Polynomial (map (evaluate_term var val) terms)
+evaluate_one_var :: (Eq a, Num a, Ord a) => Char -> a -> Polynomial a -> Polynomial a
+evaluate_one_var var val (Polynomial terms) =
+    reduce_sums $ Polynomial (map (evaluate_term var val) terms)
     where
         evaluate_term :: (Eq a, Num a) => Char -> a -> Term a -> Term a
         evaluate_term var val term = Term new_coeff irrelevant_atoms
@@ -130,7 +177,7 @@ evaluate var val (Polynomial terms) = reduce_sums $ Polynomial (map (evaluate_te
                 new_coeff = if length relevant_atoms > 0 then
                                 coeff * (evaluate_atom (head relevant_atoms) val)
                             else coeff
-evaluate var val poly = pmap (evaluate var val) poly
+evaluate_one_var var val poly = pmap (evaluate_one_var var val) poly
 
 -- Return a list of the variables used in a polynomial
 variables_in_poly :: Polynomial a -> [Char]
