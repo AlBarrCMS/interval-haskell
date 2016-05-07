@@ -1,5 +1,7 @@
 module Interval (
     Interval(Interval),
+    to_tuple,
+    from_tuple,
     from_num,
     midpoint,
     corner,
@@ -16,7 +18,8 @@ module Interval (
     times,
     scalar_mult,
     divided,
-    pow
+    pow,
+    contains
 ) where
 
 data Interval a = Interval a a
@@ -49,6 +52,12 @@ instance Functor (Interval) where
 
 from_num :: a -> Interval a
 from_num n = Interval n n
+
+to_tuple :: Interval a -> (a, a)
+to_tuple (Interval low high) = (low, high)
+
+from_tuple :: (a, a) -> Interval a
+from_tuple (low, high) = Interval low high
 
 midpoint :: (Num a, Fractional a) => Interval a -> a
 midpoint (Interval lower upper) = (lower + upper) / 2
@@ -114,3 +123,6 @@ pos_pow (Interval lower upper) n = Interval (lower^n) (upper^n)
 
 neg_pow :: (Num a, Ord a, Fractional a) => Interval a -> Int -> Interval a
 neg_pow interval n = divided (Interval 1 1) (pos_pow interval (-n))
+
+contains :: (Num a, Ord a) => Interval a -> a -> Bool
+contains (Interval low high) val = (low <= val) && (val <= high)
