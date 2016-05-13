@@ -1,17 +1,17 @@
-all:  test
+all:  main
 
 main:
-	ghc Main.hs
+	ghc -O2 Main.hs
 
 prof:
 	ghc -prof -fprof-auto -rtsopts Main.hs
 
 proftest: prof
-	rm test.ppm && ./Main +RTS -p
+	./Main +RTS -p
 
 
 test: main
-	rm test.ppm && ./Main && xdg-open test.ppm		
+	./Main && xdg-open test.ppm		
 
 clean:
 	rm *.o Main 
