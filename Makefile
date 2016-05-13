@@ -14,5 +14,5 @@ test: main
 	./Main && xdg-open test.ppm		
 
 clean:
-	rm *.o Main 
+	rm *.o *.hi Main 
     
