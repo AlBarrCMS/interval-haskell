@@ -1,0 +1,370 @@
+	Fri May  6 19:42 2016 Time and Allocation Profiling Report  (Final)
+
+	   Main +RTS -p -RTS
+
+	total time  =      124.41 secs   (124406 ticks @ 1000 us, 1 processor)
+	total alloc = 116,947,155,720 bytes  (excludes profiling overheads)
+
+COST CENTRE                                          MODULE      %time %alloc
+
+reduce_term.sorted_atoms                             Polynomial   13.8   23.3
+reduce_sums.sorted_reduced_terms                     Polynomial   10.7   13.6
+reduce_term                                          Polynomial    7.7   10.1
+reduce_sums                                          Polynomial    6.9   11.2
+compare                                              Polynomial    5.2    2.6
+compare                                              Polynomial    4.0    0.0
+reduce_sums.is_nonzero                               Polynomial    3.4    2.8
+==                                                   Polynomial    3.2    2.6
+reduce_sums.compress                                 Polynomial    2.9    1.3
+reduce_term.grouped_atoms                            Polynomial    2.7    0.0
+multiply_full                                        Polynomial    2.7    3.5
+add                                                  Polynomial    2.4    2.3
+reduce_sums.can_sum_terms                            Polynomial    2.3    0.0
+multiply_terms                                       Polynomial    2.1    2.4
+compare.cmp                                          Polynomial    1.7    0.0
+==                                                   Polynomial    1.6    0.0
+replace_variable                                     Polynomial    1.6    1.7
+reduce_term.group_same                               Polynomial    1.5    1.5
+==                                                   Polynomial    1.4    1.1
+multiply_by_term                                     Polynomial    1.4    1.8
+reduce_full                                          Polynomial    1.3    0.9
+to_const                                             Polynomial    1.3    0.7
+hull                                                 Interval      1.3    0.8
+write_to_ppm.colors                                  ImageWriter   1.3    1.4
+pmap                                                 Polynomial    1.2    1.0
+reduce_term.is_nontrivial_atom                       Polynomial    1.1    0.0
+==                                                   Interval      1.1    1.0
+replace_variable.replace_variable_term.contains_term Polynomial    1.1    0.9
+times                                                Interval      0.9    1.2
++                                                    Polynomial    0.8    1.4
+add_full                                             Polynomial    0.7    1.3
+evaluate_one_var.evaluate_term                       Polynomial    0.7    1.3
+write_to_ppm.join_with                               ImageWriter   0.5    1.1
+
+
+                                                                                                                 individual     inherited
+COST CENTRE                                                            MODULE                  no.     entries  %time %alloc   %time %alloc
+
+MAIN                                                                   MAIN                     83           0    0.0    0.0   100.0  100.0
+ CAF                                                                   PolynomialParser        160           0    0.0    0.0     0.0    0.0
+  power_parser                                                         PolynomialParser        210           1    0.0    0.0     0.0    0.0
+  term_separator                                                       PolynomialParser        208           1    0.0    0.0     0.0    0.0
+  atom_parser                                                          PolynomialParser        206           1    0.0    0.0     0.0    0.0
+ CAF                                                                   Main                    159           0    0.0    0.0   100.0  100.0
+  main                                                                 Main                    166           1    0.1    0.0   100.0  100.0
+   write_to_image                                                      IntervalNewton          457           1    0.0    0.0     0.1    0.1
+    write_to_image.blank_pixels                                        IntervalNewton          473           1    0.0    0.1     0.0    0.1
+     blank                                                             IntervalNewton          477           1    0.0    0.0     0.0    0.0
+    write_to_image.bounds                                              IntervalNewton          467           1    0.0    0.0     0.0    0.0
+     write_to_image.scale                                              IntervalNewton          471       10800    0.0    0.0     0.0    0.0
+    write_to_image.pixels_to_write                                     IntervalNewton          466           1    0.0    0.0     0.0    0.0
+     write_to_image.pixels_to_write.\                                  IntervalNewton          469        5400    0.0    0.0     0.0    0.0
+      write_to_image.cross                                             IntervalNewton          470        5400    0.0    0.0     0.0    0.0
+    write_to_image.written_pixels                                      IntervalNewton          465           1    0.0    0.0     0.1    0.0
+     write_to_image.written_pixels.\                                   IntervalNewton          474       21192    0.1    0.0     0.1    0.0
+      marked                                                           IntervalNewton          478       10398    0.0    0.0     0.0    0.0
+   write_to_ppm                                                        ImageWriter             456           1    0.0    0.0     1.9    2.8
+    write_to_ppm.colors                                                ImageWriter             462           1    1.3    1.4     1.7    2.5
+     write_to_ppm.spaces                                               ImageWriter             475           0    0.1    0.3     0.3    0.7
+      write_to_ppm.join_with                                           ImageWriter             476           0    0.2    0.4     0.2    0.4
+     write_to_ppm.join                                                 ImageWriter             463           0    0.0    0.0     0.1    0.3
+      write_to_ppm.join_with                                           ImageWriter             464           0    0.1    0.3     0.1    0.3
+    write_to_ppm.spaces                                                ImageWriter             460           1    0.0    0.0     0.0    0.0
+     write_to_ppm.join_with                                            ImageWriter             461           1    0.0    0.0     0.0    0.0
+    write_to_ppm.join                                                  ImageWriter             458           1    0.0    0.0     0.1    0.3
+     write_to_ppm.join_with                                            ImageWriter             459           1    0.1    0.3     0.1    0.3
+   p                                                                   IntervalNewton          196           1    0.0    0.0     0.0    0.0
+    p.(...)                                                            IntervalNewton          198           1    0.0    0.0     0.0    0.0
+     parse_polynomial                                                  PolynomialParser        199           1    0.0    0.0     0.0    0.0
+      parse_polynomial.stripped_poly                                   PolynomialParser        205           1    0.0    0.0     0.0    0.0
+      parse_polynomial.parse_result                                    PolynomialParser        201           1    0.0    0.0     0.0    0.0
+       polynomial_parser                                               PolynomialParser        202           1    0.0    0.0     0.0    0.0
+        term_parser                                                    PolynomialParser        203           1    0.0    0.0     0.0    0.0
+         term_parser_nontrivial_var                                    PolynomialParser        213           1    0.0    0.0     0.0    0.0
+         term_parser_nontrivial_coeff                                  PolynomialParser        204           1    0.0    0.0     0.0    0.0
+          atom_parser                                                  PolynomialParser        207           0    0.0    0.0     0.0    0.0
+           power_parser                                                PolynomialParser        211           0    0.0    0.0     0.0    0.0
+            term_separator                                             PolynomialParser        212           0    0.0    0.0     0.0    0.0
+             term_parser_nontrivial_var                                PolynomialParser        214           0    0.0    0.0     0.0    0.0
+           term_separator                                              PolynomialParser        209           0    0.0    0.0     0.0    0.0
+      parse_polynomial.right_to_maybe                                  PolynomialParser        200           1    0.0    0.0     0.0    0.0
+    p.poly                                                             IntervalNewton          197           1    0.0    0.0     0.0    0.0
+   zeros                                                               IntervalNewton          167           1    0.0    0.0    97.9   97.1
+    zeros.simple_box                                                   IntervalNewton          170           1    0.0    0.0     0.0    0.0
+     to_tuple                                                          Interval                265           2    0.0    0.0     0.0    0.0
+     construct_simple_KDTree                                           KDTree                  171           1    0.0    0.0     0.0    0.0
+    zero_boxes                                                         IntervalNewton          168       28877    0.0    0.0    97.9   97.1
+     from_tuple                                                        Interval                472       10800    0.0    0.0     0.0    0.0
+     leaf_boundaries                                                   KDTree                  468        5400    0.0    0.0     0.0    0.0
+     zero_boxes.upper_child                                            IntervalNewton          454       14438    0.0    0.0     0.0    0.0
+     zero_boxes.upper_boxes                                            IntervalNewton          453       14438    0.0    0.0     0.0    0.0
+     zero_boxes.(...)                                                  IntervalNewton          409       14438    0.0    0.0     0.0    0.0
+      split                                                            KDTree                  410       14438    0.0    0.0     0.0    0.0
+       split.upper_part                                                KDTree                  455       14438    0.0    0.0     0.0    0.0
+       split.max                                                       KDTree                  420       14438    0.0    0.0     0.0    0.0
+       split.splitting_point                                           KDTree                  419       14438    0.0    0.0     0.0    0.0
+       split.(...)                                                     KDTree                  418       14438    0.0    0.0     0.0    0.0
+       split.min                                                       KDTree                  417       14438    0.0    0.0     0.0    0.0
+       split.indexed_widths                                            KDTree                  414       14438    0.0    0.0     0.0    0.0
+        split.indexed_widths.\                                         KDTree                  416       28876    0.0    0.0     0.0    0.0
+       split.(...)                                                     KDTree                  413       14438    0.0    0.0     0.0    0.0
+        split.(...).\                                                  KDTree                  415       14438    0.0    0.0     0.0    0.0
+       split.max_dim_index                                             KDTree                  412       14438    0.0    0.0     0.0    0.0
+       split.lower_part                                                KDTree                  411       14438    0.0    0.0     0.0    0.0
+     zero_boxes.lower_child                                            IntervalNewton          408       14438    0.0    0.0     0.0    0.0
+     zero_boxes.lower_boxes                                            IntervalNewton          407       14438    0.0    0.0     0.0    0.0
+     width                                                             KDTree                  405       19838    0.0    0.0     0.0    0.0
+      width.\                                                          KDTree                  406       39676    0.0    0.0     0.0    0.0
+     zero_boxes.range_estimate                                         IntervalNewton          174       28877    0.0    0.0    97.8   97.1
+      *                                                                Interval                381       28877    0.0    0.0     0.0    0.0
+      +                                                                Interval                333       28877    0.0    0.0     0.0    0.0
+      from_tuple                                                       Interval                264       57754    0.0    0.0     0.0    0.0
+      leaf_boundaries                                                  KDTree                  180       28877    0.0    0.0     0.0    0.0
+      inclusion                                                        IntervalNewton          175       28877    0.0    0.0    97.8   97.1
+       inclusion.ctf                                                   IntervalNewton          186       28877    0.0    0.0    81.5   79.5
+        corner_form                                                    IntervalNewton          187       28877    0.0    0.0    81.5   79.5
+         corner                                                        Interval                263       57754    0.0    0.0     0.0    0.0
+         taylor_expand                                                 Polynomial              188       28877    0.0    0.0    81.5   79.5
+          taylor_expand.replacements                                   Polynomial              225       28877    0.0    0.0     0.0    0.0
+           taylor_expand.replacements.\                                Polynomial              262       57754    0.0    0.0     0.0    0.0
+          taylor_expand.replacement_commands                           Polynomial              224       28877    0.0    0.0     0.0    0.0
+           taylor_expand.replacement_commands.\                        Polynomial              226       57754    0.0    0.0     0.0    0.0
+            +                                                          Polynomial              230       28877    0.0    0.0     0.0    0.0
+          taylor_expand.new_poly                                       Polynomial              221       28877    0.0    0.0    76.7   75.1
+           compose                                                     Polynomial              223       28877    0.0    0.0     4.8    4.1
+            taylor_expand.replacement_commands                         Polynomial              227           0    0.0    0.0     4.8    4.1
+             taylor_expand.replacement_commands.\                      Polynomial              228           0    0.0    0.0     4.8    4.1
+              fromInteger                                              Polynomial              234       28877    0.0    0.0     0.0    0.0
+              +                                                        Polynomial              231           0    0.1    0.1     0.2    0.1
+               ==                                                      Polynomial              236      202139    0.0    0.0     0.0    0.0
+               fromInteger                                             Polynomial              235     2050267    0.0    0.0     0.0    0.0
+               ==                                                      Polynomial              233     2050267    0.0    0.0     0.0    0.0
+               add                                                     Polynomial              232     1039572    0.1    0.0     0.1    0.0
+              replace_variable                                         Polynomial              229     4678074    0.8    0.8     4.7    4.0
+               fromInteger                                             Polynomial              249     1905882    0.1    0.0     0.1    0.0
+               +                                                       Polynomial              246     1905882    0.3    0.6     2.2    2.2
+                add                                                    Polynomial              247     2772192    0.3    0.2     1.8    1.6
+                 reduce_sums                                           Polynomial              431     1707720    0.3    0.5     1.1    1.2
+                  reduce_sums.is_nonzero                               Polynomial              441     1707720    0.1    0.0     0.1    0.0
+                  reduce_sums.sorted_reduced_terms                     Polynomial              433      853860    0.2    0.3     0.7    0.7
+                   reduce_term                                         Polynomial              435     1707720    0.1    0.1     0.4    0.4
+                    reduce_term.sorted_atoms                           Polynomial              437     1707720    0.2    0.2     0.2    0.2
+                     reduce_term.is_nontrivial_atom                    Polynomial              438      853860    0.0    0.0     0.0    0.0
+                    reduce_term.grouped_atoms                          Polynomial              436     1707720    0.0    0.0     0.1    0.0
+                     reduce_term.group_same                            Polynomial              439      853860    0.0    0.0     0.0    0.0
+                   compare                                             Polynomial              434      853860    0.0    0.0     0.0    0.0
+                  reduce_sums.compress                                 Polynomial              432     1707720    0.1    0.0     0.1    0.0
+                   reduce_sums.can_sum_terms                           Polynomial              440      853860    0.0    0.0     0.0    0.0
+                 fromInteger                                           Polynomial              250     3626052    0.0    0.0     0.0    0.0
+                 ==                                                    Polynomial              248     3626052    0.2    0.0     0.4    0.1
+                  ==                                                   Polynomial              251     3626052    0.2    0.1     0.2    0.1
+               pmap                                                    Polynomial              240     2743315    0.3    0.1     0.3    0.1
+               replace_variable.replace_variable_term                  Polynomial              237     3811764    0.2    0.2     1.3    0.8
+                replace_variable.replace_variable_term.(...)           Polynomial              260     1732620    0.2    0.1     0.2    0.1
+                 has_var                                               Polynomial              261     1732620    0.0    0.0     0.0    0.0
+                replace_variable.replace_variable_term.pow             Polynomial              259     1732620    0.0    0.0     0.0    0.0
+                replace_variable.replace_variable_term.remaining_atoms Polynomial              255     1732620    0.1    0.0     0.2    0.1
+                 not_has_var                                           Polynomial              256     2454545    0.0    0.0     0.1    0.0
+                  has_var                                              Polynomial              257     2454545    0.1    0.0     0.1    0.0
+                replace_variable.replace_variable_term.new_poly        Polynomial              254     1732620    0.0    0.0     0.0    0.0
+                replace_variable.replace_variable_term.contains_term   Polynomial              238     3811764    0.6    0.5     0.7    0.5
+                 has_var                                               Polynomial              239     2743315    0.1    0.0     0.1    0.0
+           reduce_full                                                 Polynomial              222     7248127    1.3    0.8    71.8   70.9
+            multiply_full                                              Polynomial              258     6930480    2.7    3.5    46.1   46.8
+             ==                                                        Polynomial              298     2887700    0.1    0.0     0.2    0.0
+              ==                                                       Polynomial              299     1443850    0.1    0.0     0.1    0.0
+             multiply_by_term                                          Polynomial              275    14204883    1.4    1.8     3.5    4.2
+              multiply_terms                                           Polynomial              281    36000636    2.1    2.4     2.1    2.4
+             add                                                       Polynomial              271    14204883    1.5    1.7    39.6   39.0
+              reduce_sums                                              Polynomial              305    18014046    3.8    6.3    36.1   36.2
+               reduce_sums.is_nonzero                                  Polynomial              319    54057306    1.8    1.5     1.8    1.5
+               reduce_sums.sorted_reduced_terms                        Polynomial              307     9007023    5.6    6.8    25.6   26.0
+                reduce_term                                            Polynomial              309    60926082    3.6    4.8    15.0   18.2
+                 reduce_term.sorted_atoms                              Polynomial              311    60899298    7.4   12.1     8.7   12.4
+                  compare                                              Polynomial              313    21768101    0.5    0.3     0.7    0.3
+                   compare.cmp                                         Polynomial              314    21768101    0.2    0.0     0.2    0.0
+                  reduce_term.is_nontrivial_atom                       Polynomial              312    73691402    0.7    0.0     0.7    0.0
+                 reduce_term.grouped_atoms                             Polynomial              310    60899298    1.5    0.0     2.6    1.0
+                  reduce_term.group_same                               Polynomial              315    73691402    0.9    1.0     1.2    1.0
+                   reduce_term.same_var                                Polynomial              316    21762149    0.2    0.0     0.2    0.0
+                compare                                                Polynomial              308    75229434    2.1    0.0     5.1    1.1
+                 compare                                               Polynomial              422    76865630    2.3    1.1     3.0    1.1
+                  compare.cmp                                          Polynomial              423    76865630    0.7    0.0     0.7    0.0
+               reduce_sums.compress                                    Polynomial              306    60926082    1.6    0.7     4.9    2.3
+                reduce_sums.sum_terms                                  Polynomial              318     6868776    0.3    0.3     0.3    0.3
+                reduce_sums.can_sum_terms                              Polynomial              317    51919059    1.3    0.0     3.1    1.4
+                 ==                                                    Polynomial              424    51436130    1.8    1.4     1.8    1.4
+              fromInteger                                              Polynomial              273    23211906    0.3    0.2     0.3    0.2
+              ==                                                       Polynomial              272    23211906    0.8    0.0     1.7    0.8
+               ==                                                      Polynomial              274    23211906    0.9    0.8     0.9    0.8
+             fromInteger                                               Polynomial              270     8085560    0.1    0.1     0.1    0.1
+            reduce_sums                                                Polynomial              253     2772192    0.7    1.0     3.8    4.4
+             reduce_sums.is_nonzero                                    Polynomial              268     7914846    0.2    0.2     0.2    0.2
+             reduce_sums.sorted_reduced_terms                          Polynomial              267     2772192    0.8    1.0     2.4    2.9
+              compare                                                  Polynomial              300     5142654    0.1    0.0     0.3    0.0
+               compare                                                 Polynomial              425     3425460    0.1    0.0     0.1    0.0
+                compare.cmp                                            Polynomial              426     3425460    0.0    0.0     0.0    0.0
+              reduce_term                                              Polynomial              269     7914846    0.5    0.6     1.3    1.9
+               reduce_term.sorted_atoms                                Polynomial              285     7910382    0.6    1.2     0.7    1.2
+                compare                                                Polynomial              292       27876    0.0    0.0     0.0    0.0
+                 compare.cmp                                           Polynomial              293       27876    0.0    0.0     0.0    0.0
+                reduce_term.is_nontrivial_atom                         Polynomial              286     5185956    0.0    0.0     0.0    0.0
+               reduce_term.grouped_atoms                               Polynomial              284     7910382    0.1    0.0     0.2    0.1
+                reduce_term.group_same                                 Polynomial              287     5185956    0.0    0.1     0.0    0.1
+                 reduce_term.same_var                                  Polynomial              294       27876    0.0    0.0     0.0    0.0
+             reduce_sums.compress                                      Polynomial              266     7914846    0.2    0.1     0.5    0.2
+              reduce_sums.can_sum_terms                                Polynomial              301     5142654    0.1    0.0     0.3    0.1
+               ==                                                      Polynomial              427     3425460    0.1    0.1     0.1    0.1
+            add_full                                                   Polynomial              243     2021390    0.7    1.3    20.6   19.0
+             reduce_sums                                               Polynomial              276     1010695    0.6    0.9    19.7   17.7
+              reduce_sums.is_nonzero                                   Polynomial              291    19203205    0.6    0.5     0.6    0.5
+              reduce_sums.sorted_reduced_terms                         Polynomial              278     1010695    2.7    3.3    15.0   14.4
+               reduce_term                                             Polynomial              280    30696442    1.7    2.4     8.2   10.1
+                reduce_term.sorted_atoms                               Polynomial              283    30696442    4.2    7.0     5.1    7.2
+                 compare                                               Polynomial              302    16507693    0.3    0.2     0.5    0.2
+                  compare.cmp                                          Polynomial              303    16507693    0.1    0.0     0.1    0.0
+                 reduce_term.is_nontrivial_atom                        Polynomial              288    45201610    0.4    0.0     0.4    0.0
+                reduce_term.grouped_atoms                              Polynomial              282    30696442    0.7    0.0     1.4    0.5
+                 reduce_term.group_same                                Polynomial              289    45201610    0.5    0.5     0.7    0.5
+                  reduce_term.same_var                                 Polynomial              304    16507693    0.1    0.0     0.1    0.0
+               compare                                                 Polynomial              279    58927402    1.6    0.0     4.1    1.0
+                compare                                                Polynomial              295    74023392    2.0    1.0     2.6    1.0
+                 compare.cmp                                           Polynomial              296    74023392    0.6    0.0     0.6    0.0
+              reduce_sums.compress                                     Polynomial              277    30696442    0.9    0.4     3.4    1.9
+               reduce_sums.sum_terms                                   Polynomial              421    11493237    0.4    0.4     0.4    0.4
+               reduce_sums.can_sum_terms                               Polynomial              290    29685747    0.8    0.0     2.1    1.1
+                ==                                                     Polynomial              297    40292520    1.3    1.1     1.3    1.1
+             fromInteger                                               Polynomial              245     6006416    0.0    0.0     0.0    0.0
+             ==                                                        Polynomial              244     6006416    0.2    0.0     0.2    0.0
+              ==                                                       Polynomial              252      606417    0.0    0.0     0.0    0.0
+            fromInteger                                                Polynomial              242       57754    0.0    0.0     0.0    0.0
+            ==                                                         Polynomial              241       57754    0.0    0.0     0.0    0.0
+          taylor_expand.used_vars                                      Polynomial              194       28877    0.0    0.0     0.3    0.2
+           variable_set                                                Polynomial              195       28877    0.2    0.1     0.3    0.2
+            variable_set.variables_in_term                             Polynomial              215     1039572    0.1    0.1     0.1    0.1
+             variable_set.variables_in_term.\                          Polynomial              216     1732620    0.0    0.0     0.0    0.0
+          taylor_expand.free_vars                                      Polynomial              192       28877    0.0    0.0     0.0    0.0
+           taylor_expand.free_vars.\                                   Polynomial              193       57754    0.0    0.0     0.0    0.0
+          taylor_expand.temp_vars                                      Polynomial              191       28877    0.0    0.0     0.0    0.0
+          taylor_expand.undo_replacements                              Polynomial              190       28877    0.0    0.0     0.0    0.0
+           taylor_expand.undo_replacements.\                           Polynomial              217       57754    0.0    0.0     0.0    0.0
+            +                                                          Polynomial              320       28877    0.0    0.0     0.0    0.0
+          compose                                                      Polynomial              189       28877    0.0    0.0     4.4    4.1
+           taylor_expand.undo_replacements                             Polynomial              218           0    0.0    0.0     4.4    4.1
+            taylor_expand.undo_replacements.\                          Polynomial              219           0    0.0    0.0     4.4    4.1
+             fromInteger                                               Polynomial              324       28877    0.0    0.0     0.0    0.0
+             +                                                         Polynomial              321           0    0.1    0.1     0.2    0.1
+              ==                                                       Polynomial              326      202139    0.0    0.0     0.0    0.0
+              fromInteger                                              Polynomial              325     2050267    0.0    0.0     0.0    0.0
+              ==                                                       Polynomial              323     2050267    0.0    0.0     0.0    0.0
+              add                                                      Polynomial              322     1039572    0.1    0.0     0.1    0.0
+             replace_variable                                          Polynomial              220     4678074    0.8    0.8     4.2    4.0
+              fromInteger                                              Polynomial              339     1905882    0.0    0.0     0.0    0.0
+              +                                                        Polynomial              336     1905882    0.3    0.6     2.1    2.2
+               add                                                     Polynomial              337     2772192    0.4    0.2     1.8    1.6
+                reduce_sums                                            Polynomial              442     1707720    0.3    0.5     1.0    1.2
+                 reduce_sums.is_nonzero                                Polynomial              452     1707720    0.1    0.0     0.1    0.0
+                 reduce_sums.sorted_reduced_terms                      Polynomial              444      853860    0.2    0.3     0.5    0.7
+                  reduce_term                                          Polynomial              446     1707720    0.1    0.1     0.3    0.4
+                   reduce_term.sorted_atoms                            Polynomial              448     1707720    0.1    0.2     0.1    0.2
+                    reduce_term.is_nontrivial_atom                     Polynomial              449      853860    0.0    0.0     0.0    0.0
+                   reduce_term.grouped_atoms                           Polynomial              447     1707720    0.1    0.0     0.1    0.0
+                    reduce_term.group_same                             Polynomial              450      853860    0.0    0.0     0.0    0.0
+                  compare                                              Polynomial              445      853860    0.0    0.0     0.0    0.0
+                 reduce_sums.compress                                  Polynomial              443     1707720    0.0    0.0     0.1    0.0
+                  reduce_sums.can_sum_terms                            Polynomial              451      853860    0.0    0.0     0.0    0.0
+                fromInteger                                            Polynomial              340     3638502    0.0    0.0     0.0    0.0
+                ==                                                     Polynomial              338     3638502    0.2    0.0     0.4    0.1
+                 ==                                                    Polynomial              341     3638502    0.2    0.1     0.2    0.1
+              pmap                                                     Polynomial              330     2743315    0.2    0.1     0.2    0.1
+              replace_variable.replace_variable_term                   Polynomial              327     3811764    0.2    0.2     1.1    0.8
+               replace_variable.replace_variable_term.(...)            Polynomial              389     1732620    0.1    0.1     0.2    0.1
+                has_var                                                Polynomial              390     1732620    0.0    0.0     0.0    0.0
+               replace_variable.replace_variable_term.pow              Polynomial              388     1732620    0.0    0.0     0.0    0.0
+               replace_variable.replace_variable_term.remaining_atoms  Polynomial              385     1732620    0.1    0.0     0.2    0.1
+                not_has_var                                            Polynomial              386     2454545    0.0    0.0     0.1    0.0
+                 has_var                                               Polynomial              387     2454545    0.0    0.0     0.0    0.0
+               replace_variable.replace_variable_term.new_poly         Polynomial              384     1732620    0.0    0.0     0.0    0.0
+               replace_variable.replace_variable_term.contains_term    Polynomial              328     3811764    0.5    0.5     0.6    0.5
+                has_var                                                Polynomial              329     2743315    0.1    0.0     0.1    0.0
+       fmap                                                            Polynomial              185     7248127    0.6    0.4     1.0    0.7
+        fmap                                                           Polynomial              354     4492362    0.1    0.2     0.1    0.2
+         from_num                                                      Interval                356     4492362    0.0    0.0     0.0    0.0
+        pmap                                                           Polynomial              331     4475935    0.3    0.1     0.3    0.1
+       evaluate                                                        Polynomial              177       28877    0.0    0.0    10.8   12.4
+        evaluate.evaluations                                           Polynomial              179       28877    0.0    0.0     0.0    0.0
+         evaluate.evaluations.\                                        Polynomial              181       57754    0.0    0.0     0.0    0.0
+        compose                                                        Polynomial              178       28877    0.0    0.0    10.8   12.4
+         evaluate.evaluations                                          Polynomial              182           0    0.0    0.0    10.8   12.4
+          evaluate.evaluations.\                                       Polynomial              183           0    0.0    0.0    10.8   12.4
+           evaluate_one_var                                            Polynomial              184    14496254    0.7    0.7    10.8   12.4
+            evaluate_one_var.evaluate_term                             Polynomial              347     8123424    0.7    1.3     4.8    4.8
+             evaluate_one_var.evaluate_term.irrelevant_atoms           Polynomial              370     8115984    0.1    0.1     0.2    0.1
+              not_has_var                                              Polynomial              398     2598930    0.0    0.0     0.1    0.0
+               has_var                                                 Polynomial              399     2598930    0.0    0.0     0.0    0.0
+             evaluate_one_var.evaluate_term.coeff                      Polynomial              360     8123424    0.1    0.0     0.1    0.0
+             evaluate_one_var.evaluate_term.(...)                      Polynomial              352     8123424    0.0    0.0     1.9    2.4
+              reduce_term                                              Polynomial              353     8123424    0.6    0.9     1.8    2.4
+               reduce_term.sorted_atoms                                Polynomial              359     8115984    0.6    1.1     0.6    1.1
+                reduce_term.is_nontrivial_atom                         Polynomial              391     2598930    0.0    0.0     0.0    0.0
+               reduce_term.grouped_atoms                               Polynomial              358     8115984    0.2    0.0     0.2    0.0
+                reduce_term.group_same                                 Polynomial              392     2598930    0.0    0.0     0.0    0.0
+               fromInteger                                             Interval                357     8130864    0.1    0.1     0.1    0.1
+               ==                                                      Interval                355     8123424    0.3    0.3     0.3    0.3
+             evaluate_one_var.evaluate_term.atoms                      Polynomial              351     8123424    0.0    0.0     0.0    0.0
+             evaluate_one_var.evaluate_term.relevant_atoms             Polynomial              350     8123424    0.1    0.1     0.2    0.1
+              has_var                                                  Polynomial              393     2598930    0.0    0.0     0.0    0.0
+             evaluate_one_var.evaluate_term.new_coeff                  Polynomial              349     8123424    0.4    0.2     1.7    1.0
+              evaluate_one_var.evaluate_term.evaluate_atom             Polynomial              396     1732620    0.5    0.2     0.5    0.2
+              *                                                        Interval                394           0    0.0    0.0     0.8    0.5
+               times                                                   Interval                395     1732620    0.3    0.3     0.8    0.5
+                hull                                                   Interval                397     1732620    0.5    0.2     0.5    0.2
+            reduce_sums                                                Polynomial              342     5544384    0.9    1.6     4.9    6.2
+             reduce_sums.is_nonzero                                    Polynomial              345     6410694    0.4    0.4     0.8    0.6
+              fromInteger                                              Interval                363     6410694    0.1    0.1     0.1    0.1
+              ==                                                       Interval                362     6410694    0.3    0.2     0.3    0.2
+             reduce_sums.sorted_reduced_terms                          Polynomial              344     5544384    1.0    1.4     2.8    3.7
+              compare                                                  Polynomial              401     2579040    0.1    0.0     0.1    0.0
+              reduce_term                                              Polynomial              346     8123424    0.7    0.9     1.7    2.3
+               reduce_term.sorted_atoms                                Polynomial              369     8115984    0.5    1.0     0.5    1.0
+                reduce_term.is_nontrivial_atom                         Polynomial              402      866310    0.0    0.0     0.0    0.0
+               reduce_term.grouped_atoms                               Polynomial              368     8115984    0.1    0.0     0.1    0.0
+                reduce_term.group_same                                 Polynomial              403      866310    0.0    0.0     0.0    0.0
+               fromInteger                                             Interval                361     8130864    0.1    0.1     0.1    0.1
+               ==                                                      Interval                348     8123424    0.3    0.3     0.3    0.3
+             reduce_sums.compress                                      Polynomial              343     8123424    0.1    0.1     0.4    0.3
+              reduce_sums.sum_terms                                    Polynomial              428     1712730    0.1    0.0     0.2    0.2
+               +                                                       Interval                429           0    0.0    0.0     0.2    0.1
+                plus                                                   Interval                430     1712730    0.1    0.1     0.1    0.1
+              reduce_sums.can_sum_terms                                Polynomial              404     2579040    0.1    0.0     0.1    0.0
+            pmap                                                       Polynomial              332     8951870    0.4    0.6     0.4    0.6
+       to_const                                                        Polynomial              176     7248127    1.3    0.7     4.5    4.5
+        *                                                              Interval                382           0    0.0    0.0     1.4    1.4
+         times                                                         Interval                383     4504812    0.6    0.8     1.3    1.4
+          hull                                                         Interval                400     4504812    0.7    0.5     0.7    0.5
+        to_const.reduced_poly                                          Polynomial              365     2772192    0.1    0.1     1.7    2.3
+         reduce_full                                                   Polynomial              366     2772192    0.1    0.1     1.6    2.2
+          reduce_sums                                                  Polynomial              367     2772192    0.3    0.4     1.5    2.1
+           reduce_sums.is_nonzero                                      Polynomial              373     2772192    0.2    0.2     0.3    0.3
+            fromInteger                                                Interval                378     2772192    0.0    0.0     0.0    0.0
+            ==                                                         Interval                377     2772192    0.1    0.1     0.1    0.1
+           reduce_sums.sorted_reduced_terms                            Polynomial              372     2772192    0.3    0.6     0.9    1.3
+            reduce_term                                                Polynomial              374     2772192    0.3    0.3     0.6    0.8
+             reduce_term.sorted_atoms                                  Polynomial              380     2772192    0.2    0.3     0.2    0.3
+             reduce_term.grouped_atoms                                 Polynomial              379     2772192    0.0    0.0     0.0    0.0
+             fromInteger                                               Interval                376     2772192    0.0    0.0     0.0    0.0
+             ==                                                        Interval                375     2772192    0.1    0.1     0.1    0.1
+           reduce_sums.compress                                        Polynomial              371     2772192    0.0    0.0     0.0    0.0
+        to_const.const_term                                            Polynomial              364     2772192    0.1    0.0     0.1    0.0
+        +                                                              Interval                334           0    0.0    0.0     0.1    0.1
+         plus                                                          Interval                335     1010695    0.1    0.1     0.1    0.1
+     zero_boxes.contains_zero                                          IntervalNewton          172       28877    0.0    0.0     0.0    0.0
+      contains                                                         Interval                173       28877    0.0    0.0     0.0    0.0
+     is_leaf                                                           KDTree                  169       63153    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.IO.Handle.FD        133           0    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.IO.Encoding         124           0    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.Conc.Signal         118           0    0.0    0.0     0.0    0.0
+ CAF                                                                   Text.Read.Lex           110           0    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.IO.Encoding.Iconv    98           0    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.IO.FD                97           0    0.0    0.0     0.0    0.0
+ CAF                                                                   GHC.Integer.Type         90           0    0.0    0.0     0.0    0.0
