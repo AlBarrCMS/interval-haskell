@@ -1,7 +1,7 @@
 all:  main
 
 main:
-	ghc -O2 Main.hs
+	ghc -O3 Main.hs
 
 prof:
 	ghc -prof -fprof-auto -rtsopts Main.hs
