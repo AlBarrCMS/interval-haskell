@@ -34,12 +34,12 @@ main = do
     {-p_string <- return $ args !! 0-}
     {-filename <- return $ args !! 1-}
     {-p_string <- return p-}
-    filename <- return "out.csv"
+    filename <- return "img.ppm"
     {-poly <- return $ unsafe_parse p_string  -}
     poly <- return p
     putStrLn $ "Polynomial parsed as: " ++ (show poly) 
-    {-p_zeroes <- return $! zeros poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.01-}
-    tree_string <- return $! leaves poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.01
-    {-image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500-}
-    {-writeFile filename (write_to_ppm 255 image)-}
-    writeFile filename $ write_leaf_data tree_string
+    p_zeroes <- return $! zeros poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.01
+    {-tree_string <- return $! leaves poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.01-}
+    image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
+    writeFile filename (write_to_ppm 255 image)
+    {-writeFile filename $ write_leaf_data tree_string-}

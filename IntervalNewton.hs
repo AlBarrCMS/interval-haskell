@@ -45,22 +45,26 @@ zeros :: (Num a, Ord a, Fractional a, Show a)
     -> [Interval a]   -- ^ The bounds to search in
     -> a              -- ^ The maximum box-width to returj
     -> [[Interval a]] -- ^ The boxes where the roots might be
-zeros poly vars vals max_width = zero_boxes poly vars max_width simple_box
+zeros poly vars vals max_width = perform_interval_newton leaf_processing []
+                                                         poly vars max_width simple_box
     where
+        leaf_processing tree range = if (contains range 0) then 
+                [map from_tuple $ leaf_boundaries tree] else []
         simple_box = construct_simple_KDTree (map to_tuple vals) False
 
--- Runs Interval Newton on the given polynomial, traversing the KD Tree
-zero_boxes :: (Num a, Ord a, Fractional a, Show a) =>
-    Polynomial a -> [Char] -> a -> KDTree a Bool -> [[Interval a]]
-zero_boxes poly vars max_width tree
-    | (is_leaf tree) && not contains_zero = []
+perform_interval_newton :: (Num a, Ord a, Fractional a, Show a) =>
+    (KDTree a b -> Interval a -> [c]) -> [c] -> Polynomial a -> [Char] -> a -> KDTree a b -> [c]
+perform_interval_newton collection default_list poly vars max_width tree
+    | (is_leaf tree) && not contains_zero = collection tree range_estimate
     | (is_leaf tree) && contains_zero && (KDTree.width tree < max_width) =
-            [map from_tuple $ leaf_boundaries tree]
+        collection tree range_estimate
     | (is_leaf tree) && contains_zero = lower_boxes ++ upper_boxes
-    | otherwise = []
+    | otherwise = default_list
         where
-            upper_boxes = zero_boxes poly vars max_width upper_child
-            lower_boxes = zero_boxes poly vars max_width lower_child
+            upper_boxes = perform_interval_newton
+                            collection default_list poly vars max_width upper_child
+            lower_boxes = perform_interval_newton
+                            collection default_list poly vars max_width lower_child
             (lower_child, upper_child) = split tree
             contains_zero = contains range_estimate 0
             range_estimate = inclusion poly vars (map from_tuple $ leaf_boundaries tree)
@@ -70,23 +74,11 @@ zero_boxes poly vars max_width tree
 -- the regions they represent and the inclusion function evaluated on those regions.
 leaves :: (Num a, Ord a, Fractional a, Show a) =>
     Polynomial a -> [Char] -> [Interval a] -> a -> [KDTree a (Interval a)]
-leaves poly vars vals max_width = leaves_helper poly vars max_width simple_box
+leaves poly vars vals max_width = perform_interval_newton leaf_processing []
+                                                          poly vars max_width simple_box
     where
+        leaf_processing tree range = [set_leaf_val tree range]
         simple_box = construct_simple_KDTree (map to_tuple vals) (Interval 0 0)
-
-leaves_helper :: (Num a, Ord a, Fractional a, Show a) =>
-    Polynomial a -> [Char] -> a -> KDTree a (Interval a) -> [KDTree a (Interval a)]
-leaves_helper poly vars max_width tree
-    | (is_leaf tree) && not contains_zero = [set_leaf_val tree range_estimate]
-    | (is_leaf tree) && contains_zero && (KDTree.width tree < max_width) = [set_leaf_val tree range_estimate]
-    | (is_leaf tree) && contains_zero = lower_boxes ++ upper_boxes
-    | otherwise = []
-        where
-            upper_boxes = leaves_helper poly vars max_width upper_child
-            lower_boxes = leaves_helper poly vars max_width lower_child
-            (lower_child, upper_child) = split tree
-            contains_zero = contains range_estimate 0
-            range_estimate = inclusion poly vars (map from_tuple $ leaf_boundaries tree)
 
 -- | Returns a string containing the information from the leaves.
 -- Leaves are separated by newlines. Each line contains the low value of the leaf's

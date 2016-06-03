@@ -36,10 +36,10 @@ construct_simple_KDTree borders val = Leaf (S.fromList borders) val
 construct_KDTree :: KDTree a b -> KDTree a b -> KDTree a b
 construct_KDTree left right = Tree [left, right]
 
--- | Splits a leaf into two leaves. If passed a non-leaf, returns 2 copies of the 
+-- | Splits a leaf into two leaves. If passed a non-leaf, throws an error
 -- non-leaf
 split :: (Num a, Ord a, Fractional a) => KDTree a b -> (KDTree a b, KDTree a b)
-split t@(Tree _ ) = (t, t)
+split t@(Tree _ ) = error "KDTree: tried to split a non-leaf node"
 split (Leaf boundaries val) = (Leaf lower_part val, Leaf upper_part val)
     where
         upper_part = S.update max_dim_index (splitting_point, max) boundaries
@@ -55,20 +55,20 @@ is_leaf :: KDTree a b -> Bool
 is_leaf (Tree _ )   = False
 is_leaf (Leaf _ _ ) = True
 
--- | If passed a leaf node, returns the node's width. Otherwise, returns -1
+-- | If passed a leaf node, returns the node's width. Otherwise, throws an error
 width :: (Num a, Ord a) => KDTree a b -> a
-width (Tree _ ) = -1
+width (Tree _ ) = error "KDTree: Tried to get width of non-leaf node"
 width (Leaf boundaries _) = maximum $ map (\(low, high) -> high - low) $ toList boundaries
 
--- | If passed a leaf, sets the leaf's value. Otherwise does nothing
+-- | If passed a leaf, sets the leaf's value. Otherwise, throws an error
 set_leaf_val :: KDTree a b -> b -> KDTree a b
-set_leaf_val t@(Tree _) _ = t
+set_leaf_val t@(Tree _) _ = error "KDTree: tried to set value of non-leaf node"
 set_leaf_val (Leaf boundaries _) val = Leaf boundaries val
 
--- | If passed a leaf, returns the leaf's value. Otherwise, returns the first child's value
+-- | If passed a leaf, returns the leaf's value. Otherwise, throws an error
 get_leaf_val :: KDTree a b -> b
 get_leaf_val (Leaf _ val) = val
-get_leaf_val (Tree children) = get_leaf_val $ head children
+get_leaf_val (Tree children) = error "KDTree: tried to get value of non-leaf node"
 
 -- | If passed a leaf, returns the a list of the leaf's boundaries. Otherwise, returns an
 -- empty list.

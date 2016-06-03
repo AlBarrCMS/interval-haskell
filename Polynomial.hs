@@ -215,8 +215,10 @@ variable_set (Polynomial terms) = Set.unions $ map variables_in_term terms
         variables_in_term :: Term a -> Set.Set Char
         variables_in_term (Term _ atoms) = Set.fromList $ map (\(Atom var _) -> var) atoms
 
+-- TODO: Implement
 -- | Computes (x-c) H(p(x)) (x-c)^T
--- where x is a vector and H(p(x)) is the Hessian matrix of polynomial p(x).
+-- where x is a vector and H(p(x)) is the Hessian matrix of polynomial p(x). (Not yet
+-- implemented)
 hessian_product :: (Num a) => Polynomial a -> a -> a
 hessian_product poly center = center
 
