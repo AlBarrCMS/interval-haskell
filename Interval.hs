@@ -38,7 +38,7 @@ instance (Num a, Ord a) => Num (Interval a) where
     (+) = plus
     (*) = times
     fromInteger n = Interval (fromInteger n) (fromInteger n)
-    abs = id 
+    abs = id                 
     signum interval = Interval 1 1 
 
 instance (Num a, Fractional a, Ord a) => Fractional (Interval a) where
