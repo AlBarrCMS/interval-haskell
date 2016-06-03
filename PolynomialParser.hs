@@ -1,6 +1,10 @@
-module PolynomialParser
-
-where
+{-|
+Module      : PolynomialParser
+Description : A parser to parse polynomials in string form
+-}
+module PolynomialParser (
+    parse_polynomial
+) where
 
 import Control.Applicative
 import qualified Text.Parsec as Parsec
@@ -9,6 +13,8 @@ import Polynomial
 term_separator :: Parsec.Parsec String () String
 term_separator = Parsec.string "+"
 
+-- | Reads in a string and returns a Polynomial if it parsed correctly
+-- and Nothing if the parser failed
 parse_polynomial :: (Num a, Read a) => String -> Maybe (Polynomial a)
 parse_polynomial poly_string = right_to_maybe parse_result
     where

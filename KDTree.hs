@@ -1,3 +1,8 @@
+{-|
+Module     : KDTree
+Description: A simple KD Tree.
+-}
+
 module KDTree (
     KDTree,
     construct_simple_KDTree,
@@ -14,15 +19,25 @@ module KDTree (
 import Data.Foldable
 import qualified Data.Sequence as S
 
-data KDTree a b = Tree [KDTree a b] | Leaf (S.Seq (a, a)) b deriving Show
+-- | A KD Tree that stores data in its leaves
+data KDTree a b
+      -- | A node with multiple children
+    = Tree [KDTree a b]
 
+    -- | A Leaf node that stores its boundaries and some other value
+    | Leaf (S.Seq (a, a)) b deriving Show
+
+-- | Constructs a KDTree consisting of a single leaf with the given boundaries
+-- and other value
 construct_simple_KDTree :: [(a, a)] -> b -> KDTree a b
 construct_simple_KDTree borders val = Leaf (S.fromList borders) val
 
+-- | Construct a KDTree with 2 children
 construct_KDTree :: KDTree a b -> KDTree a b -> KDTree a b
 construct_KDTree left right = Tree [left, right]
 
--- splits a leaf into two leaves. Doesn't affect non-leaves
+-- | Splits a leaf into two leaves. If passed a non-leaf, returns 2 copies of the 
+-- non-leaf
 split :: (Num a, Ord a, Fractional a) => KDTree a b -> (KDTree a b, KDTree a b)
 split t@(Tree _ ) = (t, t)
 split (Leaf boundaries val) = (Leaf lower_part val, Leaf upper_part val)
@@ -35,26 +50,33 @@ split (Leaf boundaries val) = (Leaf lower_part val, Leaf upper_part val)
         indexed_widths = zip [0 .. ] $
             map (\(low, high) -> high - low) $ toList boundaries
 
+-- | Checks whether a given KDTree is a leaf node
 is_leaf :: KDTree a b -> Bool
 is_leaf (Tree _ )   = False
 is_leaf (Leaf _ _ ) = True
 
+-- | If passed a leaf node, returns the node's width. Otherwise, returns -1
 width :: (Num a, Ord a) => KDTree a b -> a
 width (Tree _ ) = -1
 width (Leaf boundaries _) = maximum $ map (\(low, high) -> high - low) $ toList boundaries
 
+-- | If passed a leaf, sets the leaf's value. Otherwise does nothing
 set_leaf_val :: KDTree a b -> b -> KDTree a b
 set_leaf_val t@(Tree _) _ = t
 set_leaf_val (Leaf boundaries _) val = Leaf boundaries val
 
+-- | If passed a leaf, returns the leaf's value. Otherwise, returns the first child's value
 get_leaf_val :: KDTree a b -> b
 get_leaf_val (Leaf _ val) = val
 get_leaf_val (Tree children) = get_leaf_val $ head children
 
+-- | If passed a leaf, returns the a list of the leaf's boundaries. Otherwise, returns an
+-- empty list.
 leaf_boundaries :: KDTree a b -> [(a, a)]
 leaf_boundaries (Tree _ ) = []
 leaf_boundaries (Leaf boundaries _) = toList boundaries
 
+-- | Returns a list of a node's children
 children :: KDTree a b -> [KDTree a b]
 children (Leaf _ _) = [] 
 children (Tree tree_children) = tree_children
