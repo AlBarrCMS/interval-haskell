@@ -58,7 +58,7 @@ is_leaf (Leaf _ _ ) = True
 -- | If passed a leaf node, returns the node's width. Otherwise, throws an error
 width :: (Num a, Ord a) => KDTree a b -> a
 width (Tree _ ) = error "KDTree: Tried to get width of non-leaf node"
-width (Leaf boundaries _) = maximum $ map (\(low, high) -> high - low) $ toList boundaries
+width (Leaf boundaries _) = Prelude.maximum $ map (\(low, high) -> high - low) $ toList boundaries
 
 -- | If passed a leaf, sets the leaf's value. Otherwise, throws an error
 set_leaf_val :: KDTree a b -> b -> KDTree a b
