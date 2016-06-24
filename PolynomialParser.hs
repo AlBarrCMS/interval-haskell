@@ -14,7 +14,9 @@ import Polynomial
 term_separator :: Parsec.Parsec String () String
 term_separator = Parsec.string "+"
 
-
+-- Adds a 1 after all negative signs not followed by a digit so the parser can
+-- interpret the negative sign as part of a coefficient. E.g. the parser would
+-- not be able to parse x^2-y, so we turn it into x^2-1y
 fix_negative_signs :: String -> String
 fix_negative_signs (x:y:zs)
   | x == '-' && not (Char.isDigit y) = '-' : '1' : y : fix_negative_signs zs
