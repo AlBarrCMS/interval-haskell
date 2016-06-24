@@ -7,18 +7,27 @@ module PolynomialParser (
 ) where
 
 import Control.Applicative
+import qualified Data.Char as Char
 import qualified Text.Parsec as Parsec
 import Polynomial
 
 term_separator :: Parsec.Parsec String () String
 term_separator = Parsec.string "+"
 
+
+fix_negative_signs :: String -> String
+fix_negative_signs (x:y:zs)
+  | x == '-' && not (Char.isDigit y) = '-' : '1' : y : fix_negative_signs zs
+  | x == '-'  = x : y : fix_negative_signs zs
+  | otherwise = x : fix_negative_signs (y:zs)
+fix_negative_signs x = x
+
 -- | Reads in a string and returns a Polynomial if it parsed correctly
 -- and Nothing if the parser failed
 parse_polynomial :: (Num a, Read a) => String -> Maybe (Polynomial a)
 parse_polynomial poly_string = right_to_maybe parse_result
     where
-        stripped_poly = filter (/= ' ') poly_string
+        stripped_poly = fix_negative_signs $ filter (/= ' ') poly_string
         parse_result = Parsec.parse polynomial_parser stripped_poly stripped_poly
         right_to_maybe :: Either a b -> Maybe b
         right_to_maybe (Left _) = Nothing
