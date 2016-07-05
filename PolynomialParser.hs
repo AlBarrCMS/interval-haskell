@@ -3,7 +3,8 @@ Module      : PolynomialParser
 Description : A parser to parse polynomials in string form
 -}
 module PolynomialParser (
-    parse_polynomial
+    parse_polynomial,
+    parse_float_polynomial
 ) where
 
 import Control.Applicative
@@ -23,6 +24,13 @@ fix_negative_signs (x:y:zs)
   | x == '-'  = x : y : fix_negative_signs zs
   | otherwise = x : fix_negative_signs (y:zs)
 fix_negative_signs x = x
+
+
+-- | Reads in a string and returns a Polynomial if it parsed correctly
+-- and Nothing if the parser failed. Returns the same value as parse_polynomial
+-- would, but adds in an explicit result type for convenience
+parse_float_polynomial :: String -> Maybe (Polynomial Float)
+parse_float_polynomial poly_string = parse_polynomial poly_string :: Maybe (Polynomial Float)
 
 -- | Reads in a string and returns a Polynomial if it parsed correctly
 -- and Nothing if the parser failed

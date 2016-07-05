@@ -231,7 +231,7 @@ taylor_expand vars center poly = compose undo_replacements new_poly
         undo_replacements = zipWith3 (\temp_var var pt ->
             replace_variable temp_var (Polynomial [Term 1 [Atom var 1], Term (-pt) []]))
             temp_vars vars center
-        new_poly = reduce_full $ compose replacement_commands poly
+        new_poly = reduce_full $ compose replacement_commands $ reduce_full poly
         replacement_commands =
             zipWith (\var poly -> replace_variable var poly) vars replacements
         replacements = zipWith (\n var -> Polynomial [Term n [], Term 1 [Atom var 1]])
