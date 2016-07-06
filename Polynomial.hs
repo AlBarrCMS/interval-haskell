@@ -19,7 +19,8 @@ module Polynomial(
     taylor_expand,
     partials,
     differentiate,
-    hessian_product,
+    gradient,
+    hessian,
     add,
     scalar_multiply,
     multiply,
@@ -174,6 +175,8 @@ replace_variable var replacement (Polynomial terms) = sum $ map (replace_variabl
                     new_poly = Polynomial [ Term coeff remaining_atoms ]
 replace_variable var replacement poly = pmap (replace_variable var replacement) poly
 
+
+
 -- | Evaluate a polynomial with given values for some of its variables
 evaluate :: (Eq a, Num a, Ord a) => [Char] -> [a] -> Polynomial a -> Polynomial a
 evaluate vars vals poly = compose evaluations poly
@@ -215,12 +218,19 @@ variable_set (Polynomial terms) = Set.unions $ map variables_in_term terms
         variables_in_term :: Term a -> Set.Set Char
         variables_in_term (Term _ atoms) = Set.fromList $ map (\(Atom var _) -> var) atoms
 
--- TODO: Implement
--- | Computes (x-c) H(p(x)) (x-c)^T
--- where x is a vector and H(p(x)) is the Hessian matrix of polynomial p(x). (Not yet
--- implemented)
-hessian_product :: (Num a) => Polynomial a -> a -> a
-hessian_product poly center = center
+-- | Returns the a list of partial derivatives of a polynomial with respect to the
+-- speficied variables. The derivatives are returned in the order the variables
+-- were given in.
+gradient :: (Num a, Ord a) => [Char] -> Polynomial a -> [Polynomial a]
+gradient vars poly = sequence (map differentiate vars) poly
+
+-- | Returns a matrix of second derivatives of a polynomial with respect to the
+-- specified variables. Since polynomials are infinitely differentiable, the second
+-- partial derivatives commute, so this matrix is symmetric (and thus can be viewed as
+-- being in row-major or column-major order). The order of the derivatives along each 
+-- dimension of the matrix is the same as the order of the input variables.
+hessian :: (Num a, Ord a) => [Char] -> Polynomial a -> [[Polynomial a]]
+hessian vars poly = map (gradient vars) (gradient vars poly)
 
 -- | If we write x as (c + (x-c)), we can find the taylor expansion of p(x) by writing
 -- | p(c + (x-c)) and expanding. We use this technique to find the taylor expansion of
