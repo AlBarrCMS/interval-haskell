@@ -1,0 +1,8 @@
+#!/bin/bash
+filename="plot_naive.ppm"
+
+#echo "Enter a polynomial:"
+#read name
+#./Main "$name" $filename
+./Main "$(< polynomial.txt)" $filename
+xdg-open $filename 

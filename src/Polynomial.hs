@@ -83,7 +83,7 @@ instance (Num a, Ord a) => Num (Polynomial a) where
     negate poly = scalar_multiply (-1) poly
     signum poly = Polynomial [Term 1 []]
     abs = id
-    fromInteger n = Polynomial [Term (fromInteger n) []]
+    fromInteger n = const_poly $ fromInteger n
 
 instance Functor (Term) where
     fmap f (Term coeff atoms) = Term (f coeff) atoms

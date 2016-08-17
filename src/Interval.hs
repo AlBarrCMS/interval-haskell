@@ -20,12 +20,19 @@ module Interval (
     neg,
     plus,
     minus,
+    inverse_addition,
+    (<->),
     times,
     scalar_mult,
+    scalar_div,
     divided,
     pow,
-    contains
+    contains,
+    intersection,
+    unsafe_intersection
 ) where
+
+import Data.Maybe
 
 -- | An interval (range between numbers)
 data Interval a = Interval a a
@@ -131,6 +138,15 @@ minus :: (Num a) => Interval a -> Interval a -> Interval a
 minus (Interval lower_a upper_a) (Interval lower_b upper_b) =
     Interval (lower_a - upper_b) (upper_a - lower_b)
 
+-- | Inverts interval addition (note that this is different than interval subtraction).
+-- If a = b + c, then inverse_addition a b = c
+inverse_addition :: (Num a) => Interval a -> Interval a -> Interval a
+inverse_addition (Interval lower_a upper_a) (Interval lower_b upper_b) = 
+  Interval (lower_a - lower_b) (upper_a - upper_b)
+
+(<->) :: (Num a) => Interval a -> Interval a -> Interval a
+a <-> b = inverse_addition a b
+
 -- | Generates an interval whose elements are the products of elements in the input
 -- intervals
 times :: (Num a, Ord a) => Interval a -> Interval a -> Interval a
@@ -142,6 +158,12 @@ times (Interval low_a up_a) (Interval low_b up_b) =
 scalar_mult :: (Num a, Ord a) => a -> Interval a -> Interval a
 scalar_mult s (Interval lower upper) = if s > 0 then Interval (s * lower) (s * upper)
                                        else Interval (s * upper) (s * lower)
+
+-- | Generates an interval whose elements are the elements of the input interval 
+-- divided by some scalar
+scalar_div :: (Num a, Ord a, Fractional a) => a -> Interval a -> Interval a
+scalar_div s (Interval lower upper) = if s > 0 then Interval (lower / s) (upper / s)
+                                       else Interval (upper / s) (lower / s)
 
 -- | Generates an interval whose elements are the quotients of elements in the input
 -- intervals (the elements of the first interval are in the numerator and the elements
@@ -165,3 +187,15 @@ pow interval n = if n >= 0 then pos_pow interval n else neg_pow interval n
 -- | Returns whether or not an interval contains a given value
 contains :: (Num a, Ord a) => Interval a -> a -> Bool
 contains (Interval low high) val = (low <= val) && (val <= high)
+
+-- | Returns the intersection of two intervals
+intersection :: (Ord a) => Interval a -> Interval a -> Maybe(Interval a)
+intersection (Interval lower_a upper_a) (Interval lower_b upper_b)
+  | upper_a < lower_b = Nothing
+  | upper_b < lower_a = Nothing
+  | otherwise = Just $ Interval (max lower_a lower_b) (min upper_a upper_b)
+
+-- | Returns the intersection of two intervals. The intervals must have a non-nul
+-- intersection. 
+unsafe_intersection :: (Ord a) => Interval a -> Interval a -> Interval a
+unsafe_intersection = (fromJust .) . intersection 
