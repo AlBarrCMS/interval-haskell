@@ -10,8 +10,10 @@ module Polynomial(
     to_const,
     const_poly,
     x_poly,
+    xy_poly,
     construct_poly,
     construct_univariate_polynomial,
+    construct_bivariate_polynomial,
     replace_variable,
     evaluate,
     evaluate_one_var,
@@ -74,16 +76,22 @@ instance (Show a) => Show (Polynomial a) where
 instance Ord Atom where
     compare (Atom a n_a) (Atom b n_b) = if cmp /= EQ then cmp else compare n_a n_b
         where cmp = compare a b
-instance(Ord a) => Ord (Term a) where
+instance (Eq a) => Ord (Term a) where
     compare (Term _ a_atoms) (Term _ b_atoms) = compare a_atoms b_atoms
 
-instance (Num a, Ord a) => Num (Polynomial a) where
+instance (Num a, Eq a) => Num (Polynomial a) where
     (+) = add
     (*) = multiply
     negate poly = scalar_multiply (-1) poly
     signum poly = Polynomial [Term 1 []]
     abs = id
     fromInteger n = const_poly $ fromInteger n
+
+{-instance (Eq a, Num a, Ord a) => Eq (Polynomial a) where-}
+  {-a == b = a_terms == b_terms-}
+    {-where -}
+      {-Polynomial a_terms = reduce_full a-}
+      {-Polynomial b_terms = reduce_full b-}
 
 instance Functor (Term) where
     fmap f (Term coeff atoms) = Term (f coeff) atoms
@@ -129,6 +137,11 @@ to_const poly = const_term reduced_poly
 x_poly :: (Num a) => [a] -> Polynomial a
 x_poly = construct_univariate_polynomial 'x'
 
+-- | Construct a polynomial in x and y from a matrix of coefficients
+xy_poly :: (Num a) => [[a]] -> Polynomial a
+xy_poly coeffs = construct_bivariate_polynomial 'x' 'y' coeffs
+    
+
 -- | Construct a polynomial from a string. The parsing is very basic so every
 -- | term needs a coefficient (even if it's 1) and a power of x (even if it's x^0 
 -- | or x^1)
@@ -158,6 +171,19 @@ construct_univariate_polynomial var coeffs =
             to_term :: Int -> a -> Term a
             to_term 0 coeff = Term coeff []
             to_term pow coeff = Term coeff [Atom var pow] 
+
+construct_bivariate_polynomial :: (Num a) => Char -> Char -> [[a]] -> Polynomial a
+construct_bivariate_polynomial a_var b_var coeffs = Polynomial term_list
+  where
+    indexed_coeffs = map (\(n, lst) -> zip3 lst (repeat n) [0 .. ]) $ zip [0 .. ] coeffs
+
+    term_list = map to_term $ concat indexed_coeffs 
+
+    to_term :: (a, Int, Int) -> Term a
+    to_term (coeff, 0, 0) = Term coeff []
+    to_term (coeff, a_pow, 0) = Term coeff [Atom a_var a_pow]
+    to_term (coeff, 0, b_pow) = Term coeff [Atom b_var b_pow]
+    to_term (coeff, a_pow, b_pow) = Term coeff [Atom a_var a_pow, Atom b_var b_pow]
 
 -- | Replace a variable in a polynomial with another polynomial
 replace_variable :: (Eq a, Num a, Ord a) =>
@@ -289,14 +315,14 @@ has_var :: Char -> Atom -> Bool
 has_var var (Atom a_var _) = var == a_var
 
 -- | Return the formal sum of two polynomials
-add :: (Num a, Ord a) => Polynomial a -> Polynomial a -> Polynomial a
+add :: (Num a, Eq a) => Polynomial a -> Polynomial a -> Polynomial a
 add 0 a = a
 add a 0 = a
 add a@(Polynomial _) b@(Polynomial _) = reduce_sums $ Sum a b
 add a b = Sum a b
 
 -- | Multiply a polynomial by a constant
-scalar_multiply :: (Num a, Ord a) =>  a -> Polynomial a -> Polynomial a
+scalar_multiply :: (Num a, Eq a) =>  a -> Polynomial a -> Polynomial a
 scalar_multiply s (Polynomial terms) = Polynomial (map (fmap (*s)) terms)
 scalar_multiply s (Product a b) = (scalar_multiply s a) * b
 scalar_multiply s (Sum a b) = (scalar_multiply s a) + (scalar_multiply s b)
@@ -310,7 +336,7 @@ multiply (Power a n) (Power b m) | a == b = Power a (n + m)
 multiply a b = Product a b
 
 -- | Return the expanded form of the polynomial
-reduce_full :: (Num a, Ord a, Eq a) => Polynomial a -> Polynomial a
+reduce_full :: (Num a, Eq a) => Polynomial a -> Polynomial a
 reduce_full p@(Polynomial terms) = reduce_sums p
 reduce_full (Sum a 0) = a
 reduce_full (Sum 0 a) = a
@@ -323,17 +349,17 @@ reduce_full (Product a b) = multiply_full a b
 reduce_full (Power a n) = reduce_full $ foldl' multiply_full a $ take (n-1) $ repeat a 
 
 -- | Return the expanded sum of polynomials
-add_full :: (Num a, Ord a) => Polynomial a -> Polynomial a -> Polynomial a
+add_full :: (Num a, Eq a) => Polynomial a -> Polynomial a -> Polynomial a
 add_full (Polynomial a) (Polynomial b) = reduce_sums $ Polynomial (a ++ b)
 add_full a b = add_full (reduce_full a) (reduce_full b)
 
 -- | Return the expanded product of polynomials
-multiply_full :: (Num a, Ord a, Eq a) => Polynomial a -> Polynomial a -> Polynomial a
+multiply_full :: (Num a, Eq a) => Polynomial a -> Polynomial a -> Polynomial a
 multiply_full (Polynomial terms) poly@(Polynomial _) = foldl' add 0 $ map (multiply_by_term poly) terms
 multiply_full a b = multiply_full (reduce_full a) (reduce_full b)
 
 -- | Multiply out a polynomial times a term of a polynomial
-multiply_by_term :: (Num a, Ord a) => Polynomial a -> Term a -> Polynomial a
+multiply_by_term :: (Num a, Eq a) => Polynomial a -> Term a -> Polynomial a
 multiply_by_term (Polynomial terms) term = Polynomial (map (multiply_terms term) terms)
 
 -- | Multiply two polynomial terms together
@@ -342,7 +368,7 @@ multiply_terms (Term coeff_a atoms_a) (Term coeff_b atoms_b) =
     Term (coeff_a * coeff_b) (atoms_a ++ atoms_b)
 
 -- | Sums together terms with the same variables. Does not multiply out products
-reduce_sums :: (Num a, Ord a, Eq a) => Polynomial a -> Polynomial a
+reduce_sums :: (Num a, Eq a) => Polynomial a -> Polynomial a
 reduce_sums (Sum (Polynomial a_terms) (Polynomial b_terms)) =
     reduce_sums $ Polynomial (a_terms ++ b_terms)
 reduce_sums (Polynomial []) = 0
