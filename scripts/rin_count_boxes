@@ -1,0 +1,4 @@
+#!/bin/bash
+filename="plot_rin.csv"
+
+./rin_box_num "$(< old_poly.txt)" > box_nums.txt

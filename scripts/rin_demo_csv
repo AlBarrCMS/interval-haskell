@@ -1,0 +1,4 @@
+#!/bin/bash
+filename="plot_rin.csv"
+
+./rin "$(< polynomial.txt)" $filename

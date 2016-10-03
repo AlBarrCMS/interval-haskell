@@ -1,0 +1,9 @@
+#!/bin/bash
+filename="plot_naive.csv"
+
+#echo "Enter a polynomial:"
+#read name
+#./Main "$name" $filename
+./Main "$(< old_poly.txt)" $filename
+cp $filename sketch_3D_Interval_Analysis/data/my_poly_naive.csv
+./run sketch_3D_Interval_Analysis

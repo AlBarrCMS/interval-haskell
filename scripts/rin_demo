@@ -1,0 +1,7 @@
+filename="plot_rin.ppm"
+
+#echo "Enter a polynomial:"
+#read name
+#./rin "$name" $filename
+./rin "$(< polynomial.txt)" $filename
+xdg-open $filename 
