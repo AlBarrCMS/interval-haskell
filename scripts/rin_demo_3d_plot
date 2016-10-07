@@ -1,6 +1,6 @@
 #!/bin/bash
 filename="plot_rin.csv"
 
-./rin "$(< $1)" $filename
-cp $filename ../sketch_3D_Interval_Analysis/data/my_poly_rin.csv
-./run ../sketch_3D_Interval_Analysis
+dist/build/rin/rin "$(< $1)" $filename
+cp -f $filename sketch_3D_Interval_Analysis/data/my_poly_rin.csv
+scripts/run sketch_3D_Interval_Analysis

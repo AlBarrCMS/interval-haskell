@@ -19,7 +19,9 @@ import Debug.Trace
 main :: IO ()
 main = do
   args <- getArgs
+  print args
   p_string <- return $ args !! 0
+  print p_string
   filename <- return $ args !! 1
   poly <- return $ fromJust $ parse_polynomial p_string
   putStrLn $ "Polynomial parsed as: " ++ (show poly)
