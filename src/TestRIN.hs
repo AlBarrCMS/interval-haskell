@@ -25,13 +25,12 @@ main =
     poly <- return $ fromJust $ parse_polynomial p_string
     putStrLn $ "Polynomial parsed as: " ++ (show poly)
     p_zeroes <- return
-        $! rin_solve
-           poly
-           "xy"
-           0.0001
-           0.0001
-           0.0001
-           [Interval (-3) 3, Interval (-3) 3]
+        $! rin_solve poly
+                     "xy"
+                     0.0001
+                     0.0001
+                     0.0001
+                     [Interval (-3) 3, Interval (-3) 3]
     p_leaf_data <- return
         $! leaf_rin_solve poly
                           "xy"
