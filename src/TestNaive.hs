@@ -24,9 +24,12 @@ main =
     p_zeroes <- return $! zeros poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.001
     image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
     tree_string <- return $! leaves poly "xy" [Interval (-3) 3, Interval (-3) 3] 0.001
-    if isSuffixOf ".csv" filename then
-      writeFile filename $ write_leaf_data tree_string
-    else if isSuffixOf ".ppm" filename then
-      writeFile filename (write_to_ppm 255 image)
-    else
-      putStrLn "Error: invalid filename"
+    if isSuffixOf ".csv" filename
+      then
+        writeFile filename $ write_leaf_data tree_string
+      else
+        if isSuffixOf ".ppm" filename
+          then
+            writeFile filename (write_to_ppm 255 image)
+          else
+            putStrLn "Error: invalid filename"
