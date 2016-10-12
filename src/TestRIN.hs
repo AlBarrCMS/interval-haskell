@@ -41,9 +41,10 @@ main =
                           [Interval (-3) 3, Interval (-3) 3]
     image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
     print $ length p_zeroes
-    if isSuffixOf ".csv" filename then
-      writeFile filename $ rin_write_leaf_data p_leaf_data
-    else if isSuffixOf ".ppm" filename then
-      writeFile filename (write_to_ppm 255 image)
-    else
-      putStrLn "Error: invalid filename"
+    if isSuffixOf ".csv" filename
+      then
+        writeFile filename $ rin_write_leaf_data p_leaf_data
+      else if isSuffixOf ".ppm" filename then
+        writeFile filename (write_to_ppm 255 image)
+      else
+        putStrLn "Error: invalid filename"

@@ -5,16 +5,16 @@ PeasyCam cam;
 Table[] cells;
 int[][] color_offset;
 float z_scale;
-String[] filenames = { "my_poly_rin.csv", "my_poly_naive.csv" };
+String[] filenames = { "my_poly_rin.csv" };
 int current_model = 0;
 
 
 void setup() {
-  size(800, 800, P3D); 
+  size(800, 800, P3D);
   cam = new PeasyCam(this, 1000);
   cam.setMinimumDistance(0.00001);
   cam.setMaximumDistance(1000);
-  
+
   /*cells = loadTable("paper.csv");*/
   cells = new Table[filenames.length];
   color_offset = new int[filenames.length][];
@@ -24,7 +24,7 @@ void setup() {
     color_offset[i] = new int[cells[i].getRowCount()];
     println(cells[i].getRowCount(), cells[i].getColumnCount());
     for (int j = 0; j < color_offset.length; j++) {
-      color_offset[i][j] = (int)random(30)-15; 
+      color_offset[i][j] = (int)random(30)-15;
       float z_min = cells[i].getRow(j).getFloat(0);
       float z_max = cells[i].getRow(j).getFloat(1);
       if (abs(z_min) > abs_z_max)
@@ -49,20 +49,20 @@ void draw() {
     float x2 = cell.getFloat(3);
     float y1 = cell.getFloat(4);
     float y2 = cell.getFloat(5);
-     
+
     if (min <= 0 && 0 <= max) {
-      fill(255, 0, 0); 
-      stroke(255, 0, 0); 
+      fill(255, 0, 0);
+      stroke(255, 0, 0);
     } else if (max < 0) {
       fill(100 + color_offset[current_model][i] + 30 * max);
       stroke(0);
     } else {
-       fill(180 + color_offset[current_model][i] + 30 * max); 
+       fill(180 + color_offset[current_model][i] + 30 * max);
        stroke(0);
     }
-    
+
     //noStroke();
-     
+
     min = sign(min) * log(abs(min) + 1);
     max = sign(max) * log(abs(max) + 1);
     draw_box(x1, y1, min, x2-x1, y2-y1, max-min);
@@ -97,6 +97,6 @@ void draw_box(float x, float y, float z, float x_dim, float y_dim, float z_dim) 
 }
 
 void keyPressed() {
-  if (key == ' ') 
+  if (key == ' ')
     current_model = (current_model + 1) % cells.length;
 }

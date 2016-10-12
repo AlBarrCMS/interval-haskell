@@ -1,26 +1,21 @@
-{-|
-  Module : Main
- -}
-module Main (
-  main
-) where
-  import ImageWriter
-  import Interval
-  import IntervalNewton
-  import KDTree
-  import Polynomial
-  import PolynomialParser
+import ImageWriter
+import Interval
+import IntervalNewton
+import KDTree
+import Polynomial
+import PolynomialParser
 
-  import Data.List
-  import Data.Maybe
-  import System.Environment
+import Data.List
+import Data.Maybe
+import System.Environment
 
-  -- | Main method. Currently prints out the result of Interval Newton run on
-  -- the command line arguments to a ppm or csv file. The first argument is the
-  -- polynomial as a string and the second is the output file name. The file
-  -- name must end in either .ppm or .csv
-  main :: IO ()
-  main = do
+-- | Main method. Currently prints out the result of Interval Newton run on the
+-- command line arguments to a ppm or csv file. The first argument is the polynomial as
+-- a string and the second is the output file name. The file name must end in either
+-- .ppm or .csv
+main :: IO ()
+main =
+  do
     args <- getArgs
     p_string <- return $ args !! 0
     filename <- return $ args !! 1
