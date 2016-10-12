@@ -21,7 +21,7 @@ main =
   do
     args <- getArgs
     p_string <- return $ args !! 0
-    filename <- return $ args !! 1
+    -- filename <- return $ args !! 1
     poly <- return $ fromJust $ parse_polynomial p_string
     putStrLn $ "Polynomial parsed as: " ++ (show poly)
     p_zeroes <- return
@@ -38,12 +38,13 @@ main =
                           0.0001
                           0.0000001
                           [Interval (-3) 3, Interval (-3) 3]
-    image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
-    print $ length p_zeroes
-    if isSuffixOf ".csv" filename
-      then
-        writeFile filename $ rin_write_leaf_data p_leaf_data
-      else if isSuffixOf ".ppm" filename then
-        writeFile filename (write_to_ppm 255 image)
-      else
-        putStrLn "Error: invalid filename"
+    rin_write_leaf_data p_leaf_data
+    -- image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
+    -- print $ length p_zeroes
+    -- if isSuffixOf ".csv" filename
+      -- then
+        -- writeFile filename $ rin_write_leaf_data p_leaf_data
+      -- else if isSuffixOf ".ppm" filename then
+        -- writeFile filename (write_to_ppm 255 image)
+      -- else
+        -- putStrLn "Error: invalid filename"
