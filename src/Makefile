@@ -1,9 +1,9 @@
-all:  rin main boxes
+all: rin main boxes
 
-boxes: RIN_box_num.hs
+boxes:
 	ghc -O3 RIN_box_num.hs -o rin_box_num
 
-rin: RemainderIntervalNewton.hs TestRIN.hs
+rin:
 	ghc -O3 TestRIN.hs -o rin
 
 main:
@@ -15,10 +15,9 @@ prof:
 proftest: prof
 	./Main +RTS -p
 
-
 test: main
-	./Main && xdg-open test.ppm		
+	./Main && xdg-open test.ppm
 
 clean:
-	rm *.o *.hi Main 
-    
+	rm *.o *.hi Main rin rin_box_num
+
