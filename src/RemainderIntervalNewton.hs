@@ -38,11 +38,11 @@ module RemainderIntervalNewton (
   -- polynomial and the value of the polynomial at the point you are
   -- linearizing around. See page 94 of the thesis for details.
   linearize_equation :: (Num a, Ord a)
-                     => [Char]            -- Variables in the polynomial
-                     -> [a]               -- Point to linearize around
-                     -> [Interval a]      -- Region to linearize over
-                     -> Polynomial a      -- Polynomial to linearize
-                     -> ([a], Interval a) -- (Gradient, Remainder interval)
+                     => [Char]             -- Variables in the polynomial
+                     -> [a]                -- Point to linearize around
+                     -> [Interval a]       -- Region to linearize over
+                     -> Polynomial a       -- Polynomial to linearize
+                     -> ([a], Interval a)  -- (Gradient, Remainder interval)
   linearize_equation vars center bounds poly =
       (map (to_const . evaluate vars center) (gradient vars poly), remainder)
     where
@@ -77,14 +77,13 @@ module RemainderIntervalNewton (
   -- interval linearization (inclusion function) of the polynomial
   -- (See thesis p 96)
   crop_equation :: (Num a, Ord a, Fractional a)
-                => [Char]       -- Variables in the polynomial
-                -> [a]          -- Point to linearize around
-                -> [a]          -- Gradient of the polynomial (see
-                                -- linearize_equation)
-                -> Interval a   -- Remaiinder interval of the polynomial (see
-                                -- linearize equation)
-                -> [Interval a] -- Initial region of interest
-                -> [Interval a] -- Cropped region of interest
+      => [Char]        -- Variables in the polynomial
+      -> [a]           -- Point to linearize around
+      -> [a]           -- Gradient of the polynomial (see linearize_equation)
+      -> Interval a    -- Remaiinder interval of the polynomial (see linearize
+                       -- equation)
+      -> [Interval a]  -- Initial region of interest
+      -> [Interval a]  -- Cropped region of interest
   crop_equation vars center grad remainder region =
       zipWith unsafe_intersection region bound
     where
@@ -144,11 +143,10 @@ module RemainderIntervalNewton (
   -- number of pieces to split the region into are explained in the thesis
   -- around page 103.
   rin_subdivide :: (Num a, Ord a, RealFrac a, Show a)
-                => [a]             -- Gradient of the polynomial whose zeros we
-                                   -- want
-                -> Interval a      -- Remainder interval
-                -> [Interval a]    -- Region to be subdivided
-                -> [[Interval a]]  -- List of sub-regions
+      => [a]             -- Gradient of the polynomial whose zeros we want
+      -> Interval a      -- Remainder interval
+      -> [Interval a]    -- Region to be subdivided
+      -> [[Interval a]]  -- List of sub-regions
   rin_subdivide grad remainder region = subregions
     where
       widths = map width region
@@ -192,12 +190,11 @@ module RemainderIntervalNewton (
   -- Otherwise, divide along the side closed to perpindicular to the gradient
   -- (using rin_subdivide).
   rin_limited_subdivide :: (Num a, Ord a, RealFrac a, Show a)
-                        => [a]             -- Gradient of the polynomial whose
-                                           -- zeroes we want
-                        -> Interval a      -- Remainder interval
-                        -> a               -- Maximum sidelength ratio
-                        -> [Interval a]    -- Region to be subdivided
-                        -> [[Interval a]]  -- List of sub-regions
+      => [a]             -- Gradient of the polynomial whose zeroes we want
+      -> Interval a      -- Remainder interval
+      -> a               -- Maximum sidelength ratio
+      -> [Interval a]    -- Region to be subdivided
+      -> [[Interval a]]  -- List of sub-regions
   rin_limited_subdivide grad remainder max_ratio region
       | zero_grad || (maximum widths) / (minimum widths) > max_ratio
       = simple_subdivide region
@@ -208,19 +205,18 @@ module RemainderIntervalNewton (
 
 
   generic_rin_solve :: (Num a, Ord a, RealFrac a, Floating a, Show a)
-                    => ([Interval a]
-                    -> Interval a
-                    -> Int
-                    -> [b])         -- Function to bundle up returned data
-                    -> Polynomial a -- Polynomial whose zeros we want to find
-                    -> [Char]       -- Variables in polynomial
-                    -> a            -- The maximum size of a solution region
-                    -> a            -- The maximum widht of a linearized
-                                    -- solution
-                    -> a            -- The minimum ratio of shortest to longest
-                                    -- solution region size
-                    -> [Interval a] -- The region to search in
-                    -> [b]          -- The returned data
+      => ([Interval a]
+      -> Interval a
+      -> Int
+      -> [b])          -- Function to bundle up returned data
+      -> Polynomial a  -- Polynomial whose zeros we want to find
+      -> [Char]        -- Variables in polynomial
+      -> a             -- The maximum size of a solution region
+      -> a             -- The maximum widht of a linearized solution
+      -> a             -- The minimum ratio of shortest to longest solution
+                       -- region size
+      -> [Interval a]  -- The region to search in
+      -> [b]           -- The returned data
   generic_rin_solve bundle_data
                     poly
                     vars
@@ -256,14 +252,14 @@ module RemainderIntervalNewton (
   -- | Returns a list of regions that could contain zeros of a polynomial.
   -- These regions are computed using the remainder interval newton method.
   rin_solve :: (Num a, Ord a, RealFrac a, Floating a, Show a)
-      => Polynomial a   -- The polynomial whose zeros we want
-      -> [Char]         -- The variables in the polynomial
-      -> a              -- The maximum size of a solution region
-      -> a              -- The maximum width of a linearized solution
-      -> a              -- The minimum ration of shortest to longest solution
-                        -- region size
-      -> [Interval a]   -- The region to search in
-      -> [[Interval a]] -- The acceptable solution regions
+      => Polynomial a    -- The polynomial whose zeros we want
+      -> [Char]          -- The variables in the polynomial
+      -> a               -- The maximum size of a solution region
+      -> a               -- The maximum width of a linearized solution
+      -> a               -- The minimum ration of shortest to longest solution
+                         -- region size
+      -> [Interval a]    -- The region to search in
+      -> [[Interval a]]  -- The acceptable solution regions
   rin_solve = generic_rin_solve (\region inclusion _ ->
       if inclusion `contains` 0 then
         [region]
@@ -275,16 +271,16 @@ module RemainderIntervalNewton (
   -- tuples. The first component is a region, and the second is the value of the inclusion
   -- function on that region (so you can tell if the region contains 0 or not)
   leaf_rin_solve :: (Num a, Ord a, RealFrac a, Floating a, Show a)
-      => Polynomial a                 -- The polynomial whose zeroes we want
-      -> [Char]                       -- The variables in the polynomial
-      -> a                            -- The maximum size of a solution region
-      -> a                            -- The maximum width of a linearized
-                                      -- solution
-      -> a                            -- The minimum ratio of shortest to
-                                      -- longest solution region size
-      -> [Interval a]                 -- The region to search in
-      -> [([Interval a], Interval a)] -- The solution regions and rejected
-                                      -- regions
+      => Polynomial a                  -- The polynomial whose zeroes we want
+      -> [Char]                        -- The variables in the polynomial
+      -> a                             -- The maximum size of a solution region
+      -> a                             -- The maximum width of a linearized
+                                       -- solution
+      -> a                             -- The minimum ratio of shortest to
+                                       -- longest solution region size
+      -> [Interval a]                  -- The region to search in
+      -> [([Interval a], Interval a)]  -- The solution regions and rejected
+                                       -- regions
   leaf_rin_solve =
       generic_rin_solve (\region inclusion _ -> [(region, inclusion)])
 
