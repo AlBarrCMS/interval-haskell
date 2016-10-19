@@ -23,7 +23,6 @@ main =
     p_string <- return $ args !! 0
     -- filename <- return $ args !! 1
     poly <- return $ fromJust $ parse_polynomial p_string
-    putStrLn $ "Polynomial parsed as: " ++ (show poly)
     p_zeroes <- return
         $! rin_solve poly
                      "xy"

@@ -297,10 +297,11 @@ module RemainderIntervalNewton (
   rin_write_leaf_data :: (Num a, Fractional a, RealFrac a, Show a)
                       => [([Interval a], Interval a)] -> IO()
   -- rin_write_leaf_data leaves = concat $ map write_leaf leaves
-  rin_write_leaf_data leaves = mapM_ (print . write_leaf) leaves
+  rin_write_leaf_data leaves = mapM_ (putStrLn . write_leaf) leaves
     where
-      write_leaf (y, x) =
-          "{x: " ++ jsonify x ++ ", y: " ++ bound_list y ++ "}\n"
+      write_leaf (input, output) =
+          "{input: " ++ bound_list input ++ ", output: " ++ jsonify output ++
+          "}"
         where
           -- List of lower an upper bounds of leaf regions
           bound_list = (\a -> "[" ++ a ++ "]") . intercalate ", " . map jsonify

@@ -2,6 +2,7 @@ dist/
 src/Main
 src/rin
 src/rin_box_num
+viewer/viewer
 *.csv
 *.hi
 *.o
