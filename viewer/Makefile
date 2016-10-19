@@ -1,13 +1,15 @@
-CC=g++
-GL=-lGL -lGLU -lglut
+CC      = g++
+HEADERS = tree.h viewer.h
+GL      = -lGL -lGLU -lglut
+OBJECTS = tree.o viewer.o
 
 all: viewer
 
-viewer: viewer.o
-	$(CC) -o viewer viewer.o $(GL)
+%.o: %.cpp $(HEADERS)
+	$(CC) -c $< -o $@
 
-viewer.o: main.cpp main.h
-	$(CC) -c -o viewer.o main.cpp
+viewer: $(OBJECTS)
+	$(CC) $(OBJECTS) -o viewer $(GL)
 
 clean:
 	rm *.o viewer
