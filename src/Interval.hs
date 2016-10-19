@@ -28,7 +28,8 @@ module Interval (
   pow,
   contains,
   intersection,
-  unsafe_intersection
+  unsafe_intersection,
+  jsonify
 ) where
   import Data.Maybe
 
@@ -239,3 +240,7 @@ module Interval (
   -- non-null intersection.
   unsafe_intersection :: (Ord a) => Interval a -> Interval a -> Interval a
   unsafe_intersection = (fromJust .) . intersection
+
+  jsonify :: (Show a) => Interval a -> [Char]
+  jsonify (Interval a b) =
+      "{low: " ++ (show a) ++ ", high: " ++ (show b) ++ "}"

@@ -256,14 +256,14 @@ module RemainderIntervalNewton (
   -- | Returns a list of regions that could contain zeros of a polynomial.
   -- These regions are computed using the remainder interval newton method.
   rin_solve :: (Num a, Ord a, RealFrac a, Floating a, Show a)
-    => Polynomial a   -- The polynomial whose zeros we want
-    -> [Char]         -- The variables in the polynomial
-    -> a              -- The maximum size of a solution region
-    -> a              -- The maximum width of a linearized solution
-    -> a              -- The minimum ration of shortest to longest solution
-                      -- region size
-    -> [Interval a]   -- The region to search in
-    -> [[Interval a]] -- The acceptable solution regions
+      => Polynomial a   -- The polynomial whose zeros we want
+      -> [Char]         -- The variables in the polynomial
+      -> a              -- The maximum size of a solution region
+      -> a              -- The maximum width of a linearized solution
+      -> a              -- The minimum ration of shortest to longest solution
+                        -- region size
+      -> [Interval a]   -- The region to search in
+      -> [[Interval a]] -- The acceptable solution regions
   rin_solve = generic_rin_solve (\region inclusion _ ->
       if inclusion `contains` 0 then
         [region]
@@ -297,10 +297,10 @@ module RemainderIntervalNewton (
   rin_write_leaf_data :: (Num a, Fractional a, RealFrac a, Show a)
                       => [([Interval a], Interval a)] -> IO()
   -- rin_write_leaf_data leaves = concat $ map write_leaf leaves
-  rin_write_leaf_data leaves = mapM_ print $ map write_leaf leaves
+  rin_write_leaf_data leaves = mapM_ (print . write_leaf) leaves
     where
-      write_leaf (region, (Interval low high)) =
-          (intercalate ", " (map show (low : high : boundaries))) ++ "\n"
+      write_leaf (y, x) =
+          "{x: " ++ jsonify x ++ ", y: " ++ bound_list y ++ "}\n"
         where
           -- List of lower an upper bounds of leaf regions
-          boundaries = concat $ map (\(Interval a b) -> [a, b]) region
+          bound_list = (\a -> "[" ++ a ++ "]") . intercalate ", " . map jsonify
