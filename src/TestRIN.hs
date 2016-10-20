@@ -37,7 +37,7 @@ main =
                           0.0001
                           0.0000001
                           [Interval (-3) 3, Interval (-3) 3]
-    rin_write_leaf_data p_leaf_data
+    putStrLn (rin_write_leaf_data p_leaf_data)
     -- image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
     -- print $ length p_zeroes
     -- if isSuffixOf ".csv" filename

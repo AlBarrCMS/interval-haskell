@@ -1,12 +1,13 @@
 CC      = g++
-HEADERS = tree.h viewer.h
+CPPFLAGS = -std=c++11 -g -Wall -pedantic
+HEADERS = box.h json/json.h tree.h viewer.h
 GL      = -lGL -lGLU -lglut
-OBJECTS = tree.o viewer.o
+OBJECTS = box.o jsoncpp.o tree.o viewer.o
 
 all: viewer
 
 %.o: %.cpp $(HEADERS)
-	$(CC) -c $< -o $@
+	$(CC) -c $(CPPFLAGS) $< -o $@
 
 viewer: $(OBJECTS)
 	$(CC) $(OBJECTS) -o viewer $(GL)

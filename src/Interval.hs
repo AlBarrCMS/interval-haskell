@@ -243,4 +243,4 @@ module Interval (
 
   jsonify :: (Show a) => Interval a -> [Char]
   jsonify (Interval a b) =
-      "{low: " ++ (show a) ++ ", high: " ++ (show b) ++ "}"
+      "{\"low\": " ++ (show a) ++ ", \"high\": " ++ (show b) ++ "}"

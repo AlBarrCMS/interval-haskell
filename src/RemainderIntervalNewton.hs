@@ -291,13 +291,12 @@ module RemainderIntervalNewton (
   -- high values of the boundaries in each dimension. All values are separated
   -- by commas.
   rin_write_leaf_data :: (Num a, Fractional a, RealFrac a, Show a)
-                      => [([Interval a], Interval a)] -> IO()
-  -- rin_write_leaf_data leaves = concat $ map write_leaf leaves
-  rin_write_leaf_data leaves = mapM_ (putStrLn . write_leaf) leaves
+                      => [([Interval a], Interval a)] -> String
+  rin_write_leaf_data leaves = concat (map write_leaf leaves)
     where
       write_leaf (input, output) =
-          "{input: " ++ bound_list input ++ ", output: " ++ jsonify output ++
-          "}"
+          "{\"input\": " ++ bound_list input ++ ", \"output\": " ++
+          jsonify output ++ "}\n"
         where
           -- List of lower an upper bounds of leaf regions
           bound_list = (\a -> "[" ++ a ++ "]") . intercalate ", " . map jsonify
