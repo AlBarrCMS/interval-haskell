@@ -3,7 +3,6 @@
 #include <GL/glut.h>
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include <string>
 
@@ -56,15 +55,19 @@ void drawIntervalBox(IntervalNode *node) {
             //~ << box->pos[0] << ' ' << box->pos[1] << ' '
             //~ << box->dim[0] << ' ' << box->dim[1] << std::endl;
   double t = (node->high_ + node->low_) / 2;
-  double l = std::min(log(log(abs(t))), 1.0);
-  double r = t < 0 ? l : 0;
-  double g = (float) rand() / RAND_MAX;
-  double b = t > 0 ? l : 0;
+  double l = std::min(log(log(abs(t))), 1.0) * 0.8 + 0.2;
+  double r = t < 0 ? l : 0.2;
+  double g = 0.2;
+  double b = t > 0 ? l : 0.2;
 
   if (node->high_ > 0 && node->low_ < 0) {
     r = 1;
     g = 1;
     b = 1;
+  } else if (node->high_ == 0 && node->low_ == 0) {
+    r = 0;
+    g = 0;
+    b = 0;
   }
 
   glBegin(GL_POLYGON);
@@ -84,7 +87,7 @@ void drawIntervalBox(IntervalNode *node) {
 void init(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE);
-  glutInitWindowSize(1366, 768);
+  glutInitWindowSize(400, 400);
   glutCreateWindow("Hello world :D");
   glutDisplayFunc(displayFunc);
   glutIdleFunc(displayFunc);
