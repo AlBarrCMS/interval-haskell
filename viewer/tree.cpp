@@ -8,6 +8,10 @@ IntervalNode::IntervalNode(unsigned int order) {
   boundary_ = new Box(order);
 }
 
+Box *IntervalNode::getBoundary() {
+  return boundary_;
+}
+
 void IntervalNode::setBoundary(Box *boundary) {
   for (unsigned int i = 0; i < boundary_->size; ++i) {
     boundary_->pos[i] = boundary->pos[i];
@@ -94,6 +98,8 @@ void IntervalNode::subdivide(Box *boundary) {
     }
 
     i = boundary_->size;
+    children_[j]->low_ = low_;
+    children_[j]->high_ = high_;
 
     while (i --> 0) {
       if (++is[i] == sides[i]) {
