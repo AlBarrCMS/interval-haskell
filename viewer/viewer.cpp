@@ -16,8 +16,6 @@
 #define YMAX 3
 #define YSCALE ((YMAX - YMIN) / 2)
 
-IntervalNode tree = IntervalNode(TREE_ORDER);
-
 void displayFunc() {
   std::string line;
 
@@ -37,57 +35,48 @@ void displayFunc() {
 
         low = val["output"]["low"].asDouble();
         high = val["output"]["high"].asDouble();
-        tree.setInterval(box, low, high);
       }
     }
+
+    double t = (high + low) / 2;
+    double l = std::min(log(abs(t) + 1), 1.0) * 0.6 + 0.4;
+    double r = t < 0 ? l : 0.2;
+    double g = 0.2;
+    double b = t > 0 ? l : 0.2;
+
+    glBegin(GL_POLYGON);
+      glColor3d(r, g, b);
+      glVertex2d(box->pos[0] / XSCALE, box->pos[1] / YSCALE);
+      glVertex2d((box->pos[0] + box->dim[0]) / XSCALE, box->pos[1] / YSCALE);
+      glVertex2d((box->pos[0] + box->dim[0]) / XSCALE,
+                 (box->pos[1] + box->dim[1]) / YSCALE);
+      glVertex2d(box->pos[0] / XSCALE, (box->pos[1] + box->dim[1]) / YSCALE);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+      if (high > 0 && low < 0) {
+        glColor3d(1, 1, 1);
+      } else {
+        glColor3d(0, 0, 0);
+      }
+
+      glVertex2d(box->pos[0] / XSCALE, box->pos[1] / YSCALE);
+      glVertex2d((box->pos[0] + box->dim[0]) / XSCALE, box->pos[1] / YSCALE);
+      glVertex2d((box->pos[0] + box->dim[0]) / XSCALE,
+                 (box->pos[1] + box->dim[1]) / YSCALE);
+      glVertex2d(box->pos[0] / XSCALE, (box->pos[1] + box->dim[1]) / YSCALE);
+    glEnd();
 
     delete box;
   }
 
-  glClear(GL_COLOR_BUFFER_BIT);
-  drawIntervalBox(&tree);
   glFlush();
-}
-
-void drawIntervalBox(IntervalNode *node) {
-  Box *box = node->getBoundary();
-  //~ std::cout << node->low_ << ' ' << node->high_ << ' '
-            //~ << box->pos[0] << ' ' << box->pos[1] << ' '
-            //~ << box->dim[0] << ' ' << box->dim[1] << std::endl;
-  double t = (node->high_ + node->low_) / 2;
-  double l = std::min(log(log(abs(t))), 1.0) * 0.8 + 0.2;
-  double r = t < 0 ? l : 0.2;
-  double g = 0.2;
-  double b = t > 0 ? l : 0.2;
-
-  if (node->high_ > 0 && node->low_ < 0) {
-    r = 1;
-    g = 1;
-    b = 1;
-  } else if (node->high_ == 0 && node->low_ == 0) {
-    r = 0;
-    g = 0;
-    b = 0;
-  }
-
-  glBegin(GL_POLYGON);
-    glColor3d(r, g, b);
-    glVertex2d(box->pos[0] / XSCALE, box->pos[1] / YSCALE);
-    glVertex2d((box->pos[0] + box->dim[0]) / XSCALE, box->pos[1] / YSCALE);
-    glVertex2d((box->pos[0] + box->dim[0]) / XSCALE,
-               (box->pos[1] + box->dim[1]) / YSCALE);
-    glVertex2d(box->pos[0] / XSCALE, (box->pos[1] + box->dim[1]) / YSCALE);
-  glEnd();
-
-  for (unsigned int i = 0; i < node->divisions_; i++) {
-    drawIntervalBox(node->children_[i]);
-  }
 }
 
 void init(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE);
-  glutInitWindowSize(400, 400);
+  glutInitWindowSize(600, 600);
   glutCreateWindow("Hello world :D");
   glutDisplayFunc(displayFunc);
   glutIdleFunc(displayFunc);
@@ -101,7 +90,6 @@ int main(int argc, char **argv) {
   box->pos[1] = YMIN;
   box->dim[0] = XMAX - XMIN;
   box->dim[1] = YMAX - YMIN;
-  tree.setBoundary(box);
   delete box;
   init(argc, argv);
   return 0;
