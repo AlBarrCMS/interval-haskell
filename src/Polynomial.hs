@@ -52,7 +52,9 @@ module Polynomial(
       -- | A polynomial expressed as a power of a polynomial
       | Power (Polynomial a) Int
       -- | A polynomial expressed as a sum of polynomials
-      | Sum (Polynomial a) (Polynomial a) deriving Eq
+      | Sum (Polynomial a) (Polynomial a)
+      -- | Absolute value of a polynomial
+      | Abs (Polynomial a) deriving Eq
 
   instance Show Atom
     where

@@ -52,7 +52,7 @@ source-repository head
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Polynomial, KDTree, PolynomialParser, IntervalNewton, Interval, ImageWriter, RemainderIntervalNewton
+  exposed-modules:     Expression, ExpressionParser, Polynomial, KDTree, PolynomialParser, IntervalNewton, Interval, ImageWriter, RemainderIntervalNewton
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -61,7 +61,7 @@ library
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2
+  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
 
   -- Directories containing source files.
   -- hs-source-dirs:
@@ -74,12 +74,12 @@ library
 Executable rin
   Main-Is: TestRIN.hs
   Hs-Source-Dirs: src
-  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2
+  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
 
 Executable naive
   Main-Is: TestNaive.hs
   Hs-Source-Dirs: src
-  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2
+  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
 
 test-suite polynomial-tests
   ghc-options:    -Wall

@@ -121,7 +121,7 @@ module Interval (
       else
         (Interval 0 (max (-lower) upper))
 
-  -- | Computes the mignitude of an interval (the minimum element of the
+  -- | Computes the magnitude of an interval (the minimum element of the
   -- absolute value of the interval)
   mig :: (Num a, Ord a) => Interval a -> a
   mig interval = lower where (Interval lower upper) = Interval.abs interval

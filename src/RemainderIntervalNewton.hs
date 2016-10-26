@@ -30,11 +30,11 @@ module RemainderIntervalNewton (
       construct_univariate_polynomial var [-constant, 1]
 
   -- Computes the linear Taylor Model approximation of a polynomial.
-  -- Using the first order taylor expansion of a polynomial with the Lagrange
+  -- Using the first order Taylor expansion of a polynomial with the Lagrange
   -- remainder, you can find an inclusion function for the polynomial of the
   -- form
   --   (x-c) . gradient + remainder interval
-  -- where the remainder interval depends on the hessian matrix of the
+  -- where the remainder interval depends on the Hessian matrix of the
   -- polynomial and the value of the polynomial at the point you are
   -- linearizing around. See page 94 of the thesis for details.
   linearize_equation :: (Num a, Ord a)
@@ -80,7 +80,7 @@ module RemainderIntervalNewton (
       => [Char]        -- Variables in the polynomial
       -> [a]           -- Point to linearize around
       -> [a]           -- Gradient of the polynomial (see linearize_equation)
-      -> Interval a    -- Remaiinder interval of the polynomial (see linearize
+      -> Interval a    -- Remainder interval of the polynomial (see linearize
                        -- equation)
       -> [Interval a]  -- Initial region of interest
       -> [Interval a]  -- Cropped region of interest
