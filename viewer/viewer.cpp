@@ -169,6 +169,7 @@ void mouseFunc(int button, int state, int x, int y) {
         xmax = xmin + std::max(xc, x) * width;
         ymin += std::min(yc, y) * height;
         ymax = ymin + std::max(yc, y) * height;
+        pclose(rin);
         load();
       }
 
