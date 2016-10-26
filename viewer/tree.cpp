@@ -113,4 +113,8 @@ void IntervalNode::subdivide(Box *boundary) {
   free(sides);
   free(is);
   divisions_ = divisions;
+  if (divisions_ > 6) std::cout << "x0: " << boundary_->pos[0] << boundary->pos[0] << std::endl
+                                << "y0: " << boundary_->pos[1] << boundary->pos[1] << std::endl
+                                << "x1: " << boundary_->pos[0] + boundary_->dim[0] << boundary->pos[0] + boundary->dim[0] << std::endl
+                                << "y1: " << boundary_->pos[1] + boundary_->dim[1] << boundary->pos[1] + boundary->dim[1] << std::endl;
 }

@@ -1,7 +1,6 @@
 dist/
-src/Main
-src/rin
-src/rin_box_num
+src/*
+!src/*.hs
 viewer/viewer
 *.csv
 *.hi
