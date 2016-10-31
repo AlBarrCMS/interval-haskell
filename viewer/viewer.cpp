@@ -131,6 +131,11 @@ void load() {
 }
 
 int main(int argc, char **argv) {
+  if (argc < 6) {
+    std::cerr<<"usage: " <<argv[0]<<" poly_file xmin xmax ymin ymax"<<std::endl;
+    exit(1);
+  }
+
   std::ifstream f;
 
   xmin = atof(argv[2]);
