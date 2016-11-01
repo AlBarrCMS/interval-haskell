@@ -17,6 +17,9 @@ double xmin;
 double xmax;
 double ymin;
 double ymax;
+Mode display_mode;
+
+
 int xc;
 int yc;
 bool dirty;
@@ -95,7 +98,7 @@ void displayFunc() {
       glEnd();
 
       glBegin(GL_LINE_LOOP);
-        if (box->valid) {
+        if (box->valid && display_mode == roots) {
           glColor3d(1, 1, 1);
         } else {
           glColor3d(0, 0, 0);
@@ -132,7 +135,10 @@ void load() {
 
 int main(int argc, char **argv) {
   if (argc < 6) {
-    std::cerr<<"usage: " <<argv[0]<<" poly_file xmin xmax ymin ymax"<<std::endl;
+    std::cerr<<"usage: " <<argv[0]<<" poly_file xmin xmax ymin ymax [draw_mode]"
+      <<std::endl<<"\t where draw_mode = 1 means draw minimization data"
+      <<std::endl<<"\t and anything else means draw root-finder"
+      <<std::endl;
     exit(1);
   }
 
@@ -142,9 +148,25 @@ int main(int argc, char **argv) {
   xmax = atof(argv[3]);
   ymin = atof(argv[4]);
   ymax = atof(argv[5]);
+  display_mode = roots;
+
+  if (argc >= 7) {
+    if (atoi(argv[6]) == 1) {
+      display_mode = minimization;
+    }
+  }
+
   f.open(argv[1]);
   std::getline(f, cmd);
-  cmd = "dist/build/rin/rin \"" + cmd + "\"";
+
+  switch (display_mode) {
+    case minimization:
+      cmd = "dist/build/moore_skelboe/moore_skelboe \"" + cmd + "\"";
+      break;
+    case roots:
+      cmd = "dist/build/rin/rin \"" + cmd + "\"";
+      break;
+  }
   head = NULL;
   tail = NULL;
   dirty = false;

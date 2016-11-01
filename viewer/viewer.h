@@ -10,6 +10,8 @@ struct Box {
   struct Box *next;
 };
 
+enum Mode { roots, minimization };
+
 void displayFunc();
 void init(int argc, char **argv);
 void load();

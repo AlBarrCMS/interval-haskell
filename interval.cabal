@@ -52,7 +52,7 @@ source-repository head
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Expression, ExpressionParser, Polynomial, KDTree, PolynomialParser, IntervalNewton, Interval, ImageWriter, RemainderIntervalNewton
+  exposed-modules:     Expression, ExpressionParser, Polynomial, KDTree, PolynomialParser, IntervalNewton, Interval, ImageWriter, RemainderIntervalNewton, MooreSkelboe
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -73,6 +73,11 @@ library
 
 Executable rin
   Main-Is: TestRIN.hs
+  Hs-Source-Dirs: src
+  build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
+
+Executable moore_skelboe
+  Main-Is: TestMS.hs
   Hs-Source-Dirs: src
   build-depends:       base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
 
