@@ -330,7 +330,7 @@ module Polynomial(
               Just (derivs, concat $ map (partials vars) derivs))
                     [poly]
 
-  -- | Return the partial derivatives with return to the given variables
+  -- | Return the partial derivatives with respect to the given variables
   partials :: (Num a, Ord a) => [Char] -> Polynomial a -> [Polynomial a]
   partials vars poly = map (\var -> differentiate var poly) vars
 
