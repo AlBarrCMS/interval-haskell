@@ -1,13 +1,16 @@
 #!/usr/bin/python2
 
 from random import uniform
+import sys
 
 deg = 3
+if (len(sys.argv) > 1):
+    deg = int(sys.argv[1])
 
 poly = ""
 for x_pow in range(deg):
     for y_pow in range(deg):
-        coeff = uniform(-2, 2)
+        coeff = uniform(-8, 8)
         if (x_pow == 0):
             x_str = ""
         else:
