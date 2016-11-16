@@ -5,6 +5,7 @@ import KDTree
 import Polynomial
 import PolynomialParser
 import MooreSkelboe
+import GradientDescent
 
 import Data.List
 import Data.Maybe
@@ -25,23 +26,17 @@ main =
     xmax <- return (read $ args !! 2 :: Float)
     ymin <- return (read $ args !! 3 :: Float)
     ymax <- return (read $ args !! 4 :: Float)
+    resolution <- return (read $ args !! 5 :: Float)
     poly <- return $ fromJust $ parse_polynomial p_string
     {-print $ poly-}
     {-print [xmin, xmax, ymin, ymax]-}
-    p_leaf_data <- return
-        $! leaf_minimize poly
+    {-p_leaf_data <- return-}
+        {-$! leaf_minimize poly-}
+    (p_leaf_data, min) <- return
+        $! heuristic_leaf_minimize poly
                           "xy"
-                          0.01
+                          resolution
                           100
                           [Interval xmin xmax, Interval ymin ymax]
     {-print $ length p_leaf_data-}
     putStrLn (moore_skelboe_write_leaf_data p_leaf_data)
-    -- image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
-    -- print $ length p_zeroes
-    -- if isSuffixOf ".csv" filename
-      -- then
-        -- writeFile filename $ rin_write_leaf_data p_leaf_data
-      -- else if isSuffixOf ".ppm" filename then
-        -- writeFile filename (write_to_ppm 255 image)
-      -- else
-        -- putStrLn "Error: invalid filename"

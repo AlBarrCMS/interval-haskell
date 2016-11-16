@@ -6,6 +6,7 @@
 module MooreSkelboe (
   minimize,
   leaf_minimize,
+  heuristic_leaf_minimize,
   moore_skelboe_write_leaf_data
 ) where
 
@@ -14,6 +15,7 @@ module MooreSkelboe (
 
   import Debug.Trace
 
+  import GradientDescent
   import Interval
   import Polynomial
   import qualified Data.Sequence as S
@@ -56,6 +58,7 @@ module MooreSkelboe (
   generic_minimize :: (Num a, Ord a, RealFrac a, Floating a, Show a)
       => ([Interval a]
       -> Interval a
+      -> a
       -> Bool
       -> [b])          -- Function to bundle up returned data
       -> Polynomial a  -- Polynomial whose minima we want to find
@@ -65,8 +68,8 @@ module MooreSkelboe (
       -> [Interval a]  -- The region to search in
       -> ([b], a)      -- The returned data and current minimum estimate
   generic_minimize bundle_data poly vars max_soln_size sup_min region
-      | not is_potential_minimum = (bundle_data region inclusion_function False, sup_min)
-      | small_enough_region = (bundle_data region inclusion_function True, new_sup_min)
+      | not is_potential_minimum = (bundle_data region inclusion_function sup_min False, sup_min)
+      | small_enough_region = (bundle_data region inclusion_function new_sup_min True, new_sup_min)
       | otherwise = combined_subregion_solutions
     where
       inclusion_function@(Interval lower_bound upper_bound) = inclusion poly vars region
@@ -92,7 +95,57 @@ module MooreSkelboe (
                                                      upper_region
       combined_subregion_solutions = (lower_soln ++ upper_soln, upper_sup_min)
 
-  count_termination_minimize = generic_minimize (\_ _ end_case -> [end_case])
+
+  heuristic_minimize :: (Num a, Ord a, RealFrac a, Floating a, Show a)
+      => ([Interval a]
+      -> Interval a
+      -> a
+      -> Bool
+      -> [b])          -- Function to bundle up returned data
+      -> Polynomial a  -- Polynomial whose minima we want to find
+      -> [Char]        -- Variables in polynomial
+      -> a             -- The maximum size of a solution region
+      -> a             -- The current estimate on the upper bound of the minimum
+      -> [Interval a]  -- The region to search in
+      -> [Interval a]  -- The entire search space
+      -> ([b], a)      -- The returned data and current minimum estimate
+  heuristic_minimize bundle_data poly vars max_soln_size sup_min region search_space
+      | not is_potential_minimum = (bundle_data region inclusion_function sup_min False, sup_min)
+      | small_enough_region = (bundle_data region inclusion_function sup_min True, new_sup_min)
+      | otherwise = combined_subregion_solutions
+    where
+      inclusion_function@(Interval lower_bound upper_bound) = inclusion poly vars region
+      is_potential_minimum = sup_min >= lower_bound
+      new_sup_min = compute_new_min sup_min upper_bound
+        where
+          {-compute_new_min current_min new_potential_min = min current_min new_potential_min-}
+          compute_new_min current_min new_potential_min
+            | current_min < new_potential_min = current_min
+            {-| otherwise = trace ("D: " ++ (show [new_potential_min, l]) ++show inclusion_function++ (show (map corner region) ++ (show region))) min new_potential_min l-}
+                {-where l = bounded_gradient_descent 0.01 vars search_space 10 poly (map corner region)-}
+            | otherwise = min new_potential_min l
+                where l = bounded_gradient_descent 0.01 vars search_space 10 poly (map corner region)
+
+      small_enough_region = maximum (map width region) < max_soln_size
+
+      (lower_region, upper_region) = simple_subdivide region
+      (lower_soln, lower_sup_min) = heuristic_minimize bundle_data
+                                                       poly
+                                                       vars
+                                                       max_soln_size
+                                                       new_sup_min
+                                                       lower_region
+                                                       search_space
+      (upper_soln, upper_sup_min) = heuristic_minimize bundle_data
+                                                       poly
+                                                       vars
+                                                       max_soln_size
+                                                       lower_sup_min
+                                                       upper_region
+                                                       search_space
+      combined_subregion_solutions = (lower_soln ++ upper_soln, upper_sup_min)
+
+  count_termination_minimize = generic_minimize (\_ _ _ end_case -> [end_case])
 
   -- | Returns a list of regions that could contain zeros of a polynomial.
   -- These regions are computed using the remainder interval newton method.
@@ -103,7 +156,7 @@ module MooreSkelboe (
       -> a                    -- The current estimate on the upper bound of the minimum
       -> [Interval a]         -- The region to search in
       -> ([[Interval a]], a)  -- The acceptable solution regions, and our bound on the min
-  minimize = generic_minimize (\region inclusion is_soln ->
+  minimize = generic_minimize (\region _ _ is_soln ->
       if is_soln then
         [region]
       else
@@ -120,14 +173,32 @@ module MooreSkelboe (
       -> a                                   -- The current estimate on the upper bound
                                              --     of the minimum
       -> [Interval a]                        -- The region to search in
-      -> [([Interval a], Interval a, Bool)]  -- The solution regions and rejected
+      -> [([Interval a], Interval a, a, Bool)]  -- The solution regions and rejected
                                              -- regions
   leaf_minimize poly vars max_soln_size sup_min region = fst $
-          generic_minimize (\region inclusion is_soln -> [(region, inclusion, is_soln)])
+          generic_minimize (\region inclusion min is_soln -> [(region, inclusion, min, is_soln)])
                            poly
                            vars
                            max_soln_size
                            sup_min
+                           region
+
+  heuristic_leaf_minimize :: (Num a, Ord a, RealFrac a, Floating a, Show a)
+      => Polynomial a                             -- The polynomial whose zeroes we want
+      -> [Char]                                   -- The variables in the polynomial
+      -> a                                        -- The maximum size of a solution region
+      -> a                                        -- The current estimate on the upper bound
+                                                  --     of the minimum
+      -> [Interval a]                             -- The region to search in
+      -> ([([Interval a], Interval a, a, Bool)], a)  -- The solution regions and rejected
+                                                  -- regions. The second component is the minimum
+  heuristic_leaf_minimize poly vars max_soln_size sup_min region =
+          heuristic_minimize (\region inclusion min is_soln -> [(region, inclusion, min, is_soln)])
+                           poly
+                           vars
+                           max_soln_size
+                           sup_min
+                           region
                            region
 
 
@@ -137,12 +208,12 @@ module MooreSkelboe (
   -- high values of the boundaries in each dimension. All values are separated
   -- by commas.
   moore_skelboe_write_leaf_data :: (Num a, Fractional a, RealFrac a, Show a)
-                      => [([Interval a], Interval a, Bool)] -> String
+                      => [([Interval a], Interval a, a, Bool)] -> String
   moore_skelboe_write_leaf_data leaves = concat (map write_leaf leaves)
     where
-      write_leaf (input, output, is_soln) =
+      write_leaf (input, output, min, is_soln) =
           "{\"input\": " ++ bound_list input ++ ", \"output\": " ++
-          jsonify output ++ "}\n"
+          jsonify output ++ ", \"min\": " ++ (show min) ++ "}\n"
         where
           -- List of lower an upper bounds of leaf regions
           bound_list = (\a -> "[" ++ a ++ "]") . intercalate ", " . map jsonify
