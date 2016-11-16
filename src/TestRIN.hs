@@ -25,13 +25,14 @@ main =
     xmax <- return (read $ args !! 2 :: Float)
     ymin <- return (read $ args !! 3 :: Float)
     ymax <- return (read $ args !! 4 :: Float)
+    resolution <- return (read $ args !! 5 :: Float)
     poly <- return $ fromJust $ parse_polynomial p_string
     p_leaf_data <- return
         $! leaf_rin_solve poly
                           "xy"
-                          0.0001
-                          0.0001
-                          0.0000001
+                          resolution
+                          resolution
+                          resolution
                           []
                           []
                           (\_ _ -> [])

@@ -33,11 +33,18 @@ main =
                           0.0001
                           0.0000001
                           (1 / 0, poly)
-                          []
+                          [filter_min]
                           next_min
                           [Interval xmin xmax, Interval ymin ymax]
     putStrLn (rin_write_leaf_data p_leaf_data)
       where
+        filter_min :: (Num a, Ord a)
+                 => (a, Polynomial a)
+                 -> [Interval a]
+                 -> Bool
+        filter_min (current_min, poly) region =
+            local_min region poly < current_min
+
         next_min :: (Num a, Ord a)
                  => (a, Polynomial a)
                  -> [Interval a]
@@ -48,7 +55,7 @@ main =
         local_min :: (Num a, Ord a) => [Interval a] -> Polynomial a -> a
         local_min [Interval amin amax,
                    Interval bmin bmax]
-                  poly=
+                  poly =
             minimum (map (\x -> to_const (evaluate "xy" x poly)) combos)
           where
             combos = [[x, y] | x <- [amin, amax], y <- [bmin, bmax]]
