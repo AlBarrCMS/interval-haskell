@@ -21,8 +21,6 @@ double ymin;
 double ymax;
 double current_min;
 Mode display_mode;
-
-
 int xc;
 int yc;
 bool dirty;
@@ -80,7 +78,8 @@ void idleFunc(){
           case roots:
             box.valid = high > 0 && low < 0;
             break;
-          case minimization:
+          case ms:
+          case fd:
             box.valid = low < current_min;
             prune_min_solution_boxes(current_min);
             break;
@@ -140,8 +139,10 @@ int main(int argc, char **argv) {
   display_mode = roots;
 
   if (argc >= 7) {
-    if (atoi(argv[6]) == 1) {
-      display_mode = minimization;
+    int mode = atoi(argv[6]);
+
+    if (mode == 1 || mode == 2) {
+      display_mode = mode == 1 ? ms : fd;
       current_min = std::numeric_limits<double>::max();
     }
   }
@@ -150,8 +151,11 @@ int main(int argc, char **argv) {
   std::getline(f, cmd);
 
   switch (display_mode) {
-    case minimization:
+    case ms:
       cmd = "dist/build/moore_skelboe/moore_skelboe \"" + cmd + "\"";
+      break;
+    case fd:
+      cmd = "dist/build/fd/fd \"" + cmd + "\"";
       break;
     case roots:
       cmd = "dist/build/rin/rin \"" + cmd + "\"";

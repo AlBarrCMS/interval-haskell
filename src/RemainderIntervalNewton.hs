@@ -185,6 +185,7 @@ module RemainderIntervalNewton (
       replaceAtIndex n ls item = a ++ (item:b)
         where (a, (_:b)) = splitAt n ls
 
+
   -- If the ratio between the longest and shortest sides of the region is too
   -- extreme (or the gradient is 0), then just divide along the longest side.
   -- Otherwise, divide along the side closed to perpindicular to the gradient

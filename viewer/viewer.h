@@ -12,7 +12,7 @@ struct Box {
   struct Box *next;
 };
 
-enum Mode { roots, minimization };
+enum Mode { roots, ms, fd };
 
 void draw_box(Box box);
 void draw_outline(Box box, bool emphasize);
