@@ -25,6 +25,7 @@ main =
     xmax <- return (read $ args !! 2 :: Float)
     ymin <- return (read $ args !! 3 :: Float)
     ymax <- return (read $ args !! 4 :: Float)
+    resolution <- return (read $ args !! 5 :: Float)
     poly <- return $ fromJust $ parse_polynomial p_string
     p_zeroes <- return
         $! rin_solve poly
@@ -36,9 +37,9 @@ main =
     p_leaf_data <- return
         $! leaf_rin_solve poly
                           "xy"
-                          0.0001
-                          0.0001
-                          0.0000001
+                          resolution
+                          resolution
+                          resolution
                           [Interval xmin xmax, Interval ymin ymax]
     putStrLn (rin_write_leaf_data p_leaf_data)
     -- image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
