@@ -34,9 +34,9 @@ main =
         {-$! leaf_minimize poly-}
     (p_leaf_data, min) <- return
         $! heuristic_leaf_minimize poly
-                          "xy"
-                          resolution
-                          100
-                          [Interval xmin xmax, Interval ymin ymax]
+                                   "xy"
+                                   resolution
+                                   100
+                                   [Interval xmin xmax, Interval ymin ymax]
     {-print $ length p_leaf_data-}
     putStrLn (moore_skelboe_write_leaf_data p_leaf_data)

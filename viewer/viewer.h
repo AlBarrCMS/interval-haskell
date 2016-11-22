@@ -13,7 +13,7 @@
 #define XSCALE (xmax - xmin)
 #define YSCALE (ymax - ymin)
 
-enum Mode { roots, minimization };
+enum Mode { roots, ms, fd };
 
 class Box {
   public:

@@ -6,10 +6,8 @@ double ymin;
 double ymax;
 double current_min;
 Mode display_mode;
-
 int width  = 800;
 int height = 800;
-
 int xc;
 int yc;
 FILE *rin;
@@ -60,7 +58,7 @@ void idleFunc(){
 
           // If we are computing a minimum, we need to keep track of the
           // minimum
-          if (display_mode == minimization) {
+          if (display_mode != roots) {
             if (val.isMember("min")) {
               current_min = val["min"].asDouble();
               prune_min_solution_boxes(current_min);
@@ -107,7 +105,8 @@ FILE *load(std::string cmd, std::string polynomial, double xmin, double xmax,
       s << cmd << " \"" << polynomial << "\" " << xmin << ' ' << xmax << ' '
         << ymin << ' ' << ymax << " "<< (double) pow(XSCALE/1000, 2);
       break;
-    case minimization:
+    case ms:
+    case fd:
       s << cmd << " \"" << polynomial << "\" " << xmin << ' ' << xmax << ' '
         << ymin << ' ' << ymax << " "<< (double) pow(XSCALE/200, 1);
       break;
@@ -134,8 +133,10 @@ int main(int argc, char **argv) {
 
 
   if (argc >= 7) {
-    if (atoi(argv[6]) == 1) {
-      display_mode = minimization;
+    int mode = atoi(argv[6]);
+
+    if (mode == 1 || mode == 2) {
+      display_mode = mode == 1 ? ms : fd;
       current_min = std::numeric_limits<double>::max();
     }
   }
@@ -144,8 +145,11 @@ int main(int argc, char **argv) {
   std::getline(f, polynomial);
 
   switch (display_mode) {
-    case minimization:
+    case ms:
       cmd = "dist/build/moore_skelboe/moore_skelboe";
+      break;
+    case fd:
+      cmd = "dist/build/fd/fd";
       break;
     case roots:
       cmd = "dist/build/rin/rin";
@@ -159,8 +163,8 @@ int main(int argc, char **argv) {
 }
 
 void motionFunc(int x, int y) {
-  mouse_rect->x1 = 2 * (x - (double)width/2)/width;
-  mouse_rect->y1 = 2 * (-y + (double)height/2)/height;
+  mouse_rect->x1 = 2 * (x - (double) width / 2) / width;
+  mouse_rect->y1 = 2 * (-y + (double) height / 2) / height;
 
   glutPostRedisplay();
 }
@@ -199,7 +203,7 @@ void mouseFunc(int button, int state, int x, int y) {
         potential_solutions.clear();
         discarded_boxes.clear();
 
-        if (display_mode == minimization)
+        if (display_mode != roots)
           current_min = std::numeric_limits<double>::max();
       }
 
@@ -271,7 +275,8 @@ Box::Box(Json::Value val, Mode display_mode) {
     case roots:
       valid = high > 0 && low < 0;
       break;
-    case minimization:
+    case ms:
+    case fd:
       valid = low < current_min;
       prune_min_solution_boxes(current_min);
       break;
@@ -291,7 +296,8 @@ Box::Box(Json::Value val, Mode display_mode) {
       g = 0.2 + g_noise;
       b = low > 0 ? high : 0.2 + b_noise;
       break;
-    case minimization:
+    case ms:
+    case fd:
       r = 0.4 + r_noise;
       g = 0.2 + g_noise;
       b = 0.8 + b_noise;

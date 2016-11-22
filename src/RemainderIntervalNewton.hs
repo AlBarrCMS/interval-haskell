@@ -185,6 +185,7 @@ module RemainderIntervalNewton (
       replaceAtIndex n ls item = a ++ (item:b)
         where (a, (_:b)) = splitAt n ls
 
+
   -- If the ratio between the longest and shortest sides of the region is too
   -- extreme (or the gradient is 0), then just divide along the longest side.
   -- Otherwise, divide along the side closed to perpindicular to the gradient
@@ -197,7 +198,7 @@ module RemainderIntervalNewton (
       -> [[Interval a]]  -- List of sub-regions
   rin_limited_subdivide grad remainder max_ratio region
       | zero_grad || (maximum widths) / (minimum widths) > max_ratio
-      = simple_subdivide region
+          = simple_subdivide region
       | otherwise = rin_subdivide grad remainder region
     where
       widths = map width region
@@ -206,29 +207,41 @@ module RemainderIntervalNewton (
 
   generic_rin_solve :: (Num a, Ord a, RealFrac a, Floating a, Show a)
       => ([Interval a]
-      -> Interval a
-      -> Int
-      -> [b])          -- Function to bundle up returned data
+          -> Interval a
+          -> Int
+          -> [c])      -- Function to bundle up returned data
       -> Polynomial a  -- Polynomial whose zeros we want to find
       -> [Char]        -- Variables in polynomial
       -> a             -- The maximum size of a solution region
-      -> a             -- The maximum widht of a linearized solution
+      -> a             -- The maximum width of a linearized solution
       -> a             -- The minimum ratio of shortest to longest solution
                        -- region size
+      -> b             -- State
+      -> [(b
+          -> [Interval a]
+          -> Bool)]    -- Filters
+      -> (b
+          -> [Interval a]
+          -> b)        -- State transformation
       -> [Interval a]  -- The region to search in
-      -> [b]           -- The returned data
+      -> [c]           -- The returned data
   generic_rin_solve bundle_data
                     poly
                     vars
                     max_soln_size
                     max_lin_size
                     max_ratio
+                    extra_data
+                    filters
+                    transformation
                     region
       | not contains_zero = bundle_data region inclusion_function (-1)
+      | not (foldr (&&) True (map (\x -> x extra_data region) filters))
+          = bundle_data region inclusion_function (-1)
       | maximum (map width region) < max_soln_size
-      = bundle_data region inclusion_function 0
+          = bundle_data region inclusion_function 0
       | (width remainder) / (norm gradient) < max_lin_size
-      = bundle_data region inclusion_function 1
+          = bundle_data region inclusion_function 1
       | otherwise = concat subregion_solutions
     where
       center = map corner region
@@ -243,11 +256,16 @@ module RemainderIntervalNewton (
                                  vars
                                  max_soln_size
                                  max_lin_size
-                                 max_ratio)
+                                 max_ratio
+                                 (transformation extra_data region)
+                                 filters
+                                 transformation)
               subregions
       norm vec = sqrt $ sum $ map (\x -> x*x) vec
 
+
   count_termination_rin_solve = generic_rin_solve (\_ _ end_case -> [end_case])
+
 
   -- | Returns a list of regions that could contain zeros of a polynomial.
   -- These regions are computed using the remainder interval newton method.
@@ -258,6 +276,13 @@ module RemainderIntervalNewton (
       -> a               -- The maximum width of a linearized solution
       -> a               -- The minimum ration of shortest to longest solution
                          -- region size
+      -> b               -- State
+      -> [(b
+          -> [Interval a]
+          -> Bool)]      -- Filters
+      -> (b
+          -> [Interval a]
+          -> b)          -- State transformation
       -> [Interval a]    -- The region to search in
       -> [[Interval a]]  -- The acceptable solution regions
   rin_solve = generic_rin_solve (\region inclusion _ ->
@@ -278,6 +303,13 @@ module RemainderIntervalNewton (
                                        -- solution
       -> a                             -- The minimum ratio of shortest to
                                        -- longest solution region size
+      -> b                             -- State
+      -> [(b
+          -> [Interval a]
+          -> Bool)]                    -- Filters
+      -> (b
+          -> [Interval a]
+          -> b)                        -- State transformation
       -> [Interval a]                  -- The region to search in
       -> [([Interval a], Interval a)]  -- The solution regions and rejected
                                        -- regions
