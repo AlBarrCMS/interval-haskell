@@ -4,13 +4,14 @@ module RemainderIntervalNewton (
   count_termination_rin_solve,
   rin_write_leaf_data
 ) where
-  import Data.List
-  import Data.Ord
-
-  import Debug.Trace
-
   import Interval
   import Polynomial
+
+  import Data.List
+  import Data.Ord
+  import System.IO.Unsafe
+
+  import Debug.Trace
 
   -- TODO: Remove Show typeclasses when they are unnecessary
 
@@ -219,10 +220,7 @@ module RemainderIntervalNewton (
       -> b             -- State
       -> [(b
           -> [Interval a]
-          -> Bool)]    -- Filters
-      -> (b
-          -> [Interval a]
-          -> b)        -- State transformation
+          -> IO Bool)] -- Filters
       -> [Interval a]  -- The region to search in
       -> [c]           -- The returned data
   generic_rin_solve bundle_data
@@ -231,12 +229,12 @@ module RemainderIntervalNewton (
                     max_soln_size
                     max_lin_size
                     max_ratio
-                    extra_data
+                    state
                     filters
-                    transformation
                     region
       | not contains_zero = bundle_data region inclusion_function (-1)
-      | not (foldr (&&) True (map (\x -> x extra_data region) filters))
+      | not (foldr (&&) True (map (\x -> unsafePerformIO (x state region))
+                                  filters))
           = bundle_data region inclusion_function (-1)
       | maximum (map width region) < max_soln_size
           = bundle_data region inclusion_function 0
@@ -257,9 +255,8 @@ module RemainderIntervalNewton (
                                  max_soln_size
                                  max_lin_size
                                  max_ratio
-                                 (transformation extra_data region)
-                                 filters
-                                 transformation)
+                                 state
+                                 filters)
               subregions
       norm vec = sqrt $ sum $ map (\x -> x*x) vec
 
@@ -279,10 +276,7 @@ module RemainderIntervalNewton (
       -> b               -- State
       -> [(b
           -> [Interval a]
-          -> Bool)]      -- Filters
-      -> (b
-          -> [Interval a]
-          -> b)          -- State transformation
+          -> IO Bool)]   -- Filters
       -> [Interval a]    -- The region to search in
       -> [[Interval a]]  -- The acceptable solution regions
   rin_solve = generic_rin_solve (\region inclusion _ ->
@@ -306,10 +300,7 @@ module RemainderIntervalNewton (
       -> b                             -- State
       -> [(b
           -> [Interval a]
-          -> Bool)]                    -- Filters
-      -> (b
-          -> [Interval a]
-          -> b)                        -- State transformation
+          -> IO Bool)]                 -- Filters
       -> [Interval a]                  -- The region to search in
       -> [([Interval a], Interval a)]  -- The solution regions and rejected
                                        -- regions

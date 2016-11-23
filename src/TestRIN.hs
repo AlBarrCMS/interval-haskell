@@ -35,7 +35,6 @@ main =
                           resolution
                           []
                           []
-                          (\_ _ -> [])
                           [Interval xmin xmax, Interval ymin ymax]
     putStrLn (rin_write_leaf_data p_leaf_data)
     -- image <- return $ write_to_image p_zeroes 6.0 6.0 3.0 3.0 500 500
