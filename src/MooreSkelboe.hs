@@ -20,6 +20,15 @@ module MooreSkelboe (
   import Polynomial
   import qualified Data.Sequence as S
 
+  -- | Computes the corner taylor form of a polynomial
+  corner_form :: (Eq a, Ord a, Num a)
+              => [Char]
+              -> [Interval a]
+              -> Polynomial a
+              -> Polynomial a
+  corner_form vars intervals poly =
+      taylor_expand vars (map corner intervals) poly
+
   -- | Computes the inclusion function of a polynomial applied to a given interval by
   -- applying the polynomial to integer arguments. If any variables of the polynomial
   -- are not specified, they are assumed to be 0.
@@ -72,7 +81,8 @@ module MooreSkelboe (
       | small_enough_region = (bundle_data region inclusion_function new_sup_min True, new_sup_min)
       | otherwise = combined_subregion_solutions
     where
-      inclusion_function@(Interval lower_bound upper_bound) = inclusion poly vars region
+      corner_poly = corner_form vars region poly
+      inclusion_function@(Interval lower_bound upper_bound) = inclusion corner_poly vars region
       is_potential_minimum = sup_min >= lower_bound
       new_sup_min = min sup_min upper_bound
 
@@ -114,7 +124,8 @@ module MooreSkelboe (
       | small_enough_region = (bundle_data region inclusion_function sup_min True, new_sup_min)
       | otherwise = combined_subregion_solutions
     where
-      inclusion_function@(Interval lower_bound upper_bound) = inclusion poly vars region
+      corner_poly = corner_form vars region poly
+      inclusion_function@(Interval lower_bound upper_bound) = inclusion corner_poly vars region
       is_potential_minimum = sup_min >= lower_bound
       new_sup_min = compute_new_min sup_min upper_bound
         where
