@@ -92,11 +92,6 @@ Executable naive
   hs-source-dirs: src
   build-depends:  base >=4.8 && <4.9, split >=0.2 && <0.3, containers >=0.5 && <0.6, parsec >=3.1 && <3.2, parsec-numbers >=0.1.0
 
-Executable nurbs
-  main-is:        TestNURBS.hs
-  hs-source-dirs: src
-  build-depends:  base >=4.8 && <4.9, hspec >=2.3, lens >=4.15, linear >=1.20.0, nurbs >=0.1.0.0
-
 test-suite polynomial-tests
   ghc-options:    -Wall
   type:           exitcode-stdio-1.0
